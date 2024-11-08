@@ -84,6 +84,7 @@ public class HomePage {
             card.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
+                    // TODO: Add correct route to events
                     switch (i) {
                         case 0:
                             //Add re-direct to Calendario page
