@@ -3,7 +3,10 @@ package Petshop;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class HomePage {
     private static final int PANEL_WIDTH = 800;
@@ -30,13 +33,14 @@ public class HomePage {
         panel.add(createLeftPanel(), BorderLayout.WEST);
 
         JPanel contentPanel = createContentPanel();
-        populateContentPanelWithCards(contentPanel);
+        ArrayList<JPanel> cardList = populateContentPanelWithCards(contentPanel);
+        setCardsEvents(cardList);
         panel.add(contentPanel, BorderLayout.CENTER);
 
         return panel;
     }
 
-    private void populateContentPanelWithCards(JPanel contentPanel) {
+    private ArrayList<JPanel> populateContentPanelWithCards(JPanel contentPanel) {
         contentPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(20, 10, 10, 0);
@@ -51,9 +55,12 @@ public class HomePage {
                 {"Pets", "Cadastre um pet", "pets.png"},
         };
 
+        ArrayList<JPanel> cardList = new ArrayList<>();
+
         for (int i = 0; i < extraCards.length; i++) {
             gbc.gridx = i % 2;
             gbc.gridy = i / 2;
+
 
             String imagePath = extraCards[i][2];
             JPanel card = createCards(extraCards[i][0], extraCards[i][1], 20, 10, 5, 10, imagePath);
@@ -61,6 +68,58 @@ public class HomePage {
             card.setPreferredSize(new Dimension(200, 100));
 
             contentPanel.add(card, gbc);
+
+            cardList.add(i, card);
+        }
+
+        return cardList;
+    }
+
+    //Adds click events to cards
+    private void setCardsEvents(ArrayList<JPanel> cardList) {
+        for (JPanel card : cardList) {
+            int i = cardList.indexOf(card);
+            card.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    switch (i) {
+                        case 0:
+                            //Add re-direct to Calendario page
+                            JOptionPane.showMessageDialog(null, "Evento Calendário");
+                            break;
+                        case 1:
+                            //Add re-direct to Cirurgia page
+                            JOptionPane.showMessageDialog(null, "Evento Cirurgia");
+                            break;
+                        case 2:
+                            //Add re-direct to Consulta page
+                            JOptionPane.showMessageDialog(null, "Evento Consulta");
+                            break;
+                        case 3:
+                            //Add re-direct to Evento page
+                            JOptionPane.showMessageDialog(null, "Evento Evento");
+                            break;
+                        case 4:
+                            //Add re-direct to Tutor page
+                            JOptionPane.showMessageDialog(null, "Evento Tutor");
+                            break;
+                        case 5:
+                            //Add re-direct to Pets page
+                            JOptionPane.showMessageDialog(null, "Evento Pets");
+                            break;
+                    }
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    card.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
+            });
         }
     }
 
