@@ -52,12 +52,12 @@ public class HomePage {
 
 
         String[][] extraCards = {
-                {"Calendário", "Calendário", "calendario.png"},
-                {"Cirurgia", "Cirurgia", "cirurgia.png"},
-                {"Consulta", "Consulta", "consulta.png"},
-                {"Evento", "Evento", "evento.png"},
-                {"Tutor", "Tutor", "tutor.png"},
-                {"Pets", "Pets", "pets.png"},
+                {"Calendário", "Verifique o calendário", "calendario.png"},
+                {"Cirurgia", "Marque uma cirurgia", "cirurgia.png"},
+                {"Consulta", "Marque uma consulta", "consulta.png"},
+                {"Evento", "Marque um evento", "evento.png"},
+                {"Tutor", "Cadastre um tutor", "tutor.png"},
+                {"Pets", "Cadastre um pet", "pets.png"},
         };
 
         ArrayList<JPanel> cardList = new ArrayList<>();
