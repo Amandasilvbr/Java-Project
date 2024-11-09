@@ -7,6 +7,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Locale;
 
 public class HomePage {
     private static final int PANEL_WIDTH = 800;
@@ -47,12 +52,12 @@ public class HomePage {
 
 
         String[][] extraCards = {
-                {"Calendário", "Verifique o calendário", "calendario.png"},
-                {"Cirurgia", "Marque uma cirurgia", "cirurgia.png"},
-                {"Consulta", "Marque uma consulta", "consulta.png"},
-                {"Evento", "Marque um evento", "evento.png"},
-                {"Tutor", "Cadastre um tutor", "tutor.png"},
-                {"Pets", "Cadastre um pet", "pets.png"},
+                {"Calendário", "Calendário", "calendario.png"},
+                {"Cirurgia", "Cirurgia", "cirurgia.png"},
+                {"Consulta", "Consulta", "consulta.png"},
+                {"Evento", "Evento", "evento.png"},
+                {"Tutor", "Tutor", "tutor.png"},
+                {"Pets", "Pets", "pets.png"},
         };
 
         ArrayList<JPanel> cardList = new ArrayList<>();
@@ -76,6 +81,7 @@ public class HomePage {
     }
 
     //Adds click events to cards
+
     private void setCardsEvents(ArrayList<JPanel> cardList) {
         for (JPanel card : cardList) {
             int i = cardList.indexOf(card);
@@ -84,27 +90,31 @@ public class HomePage {
                 public void mouseClicked(MouseEvent e) {
                     switch (i) {
                         case 0:
-                            //Add re-direct to Calendario page
-                            JOptionPane.showMessageDialog(null, "Evento Calendário");
+                            // Close the HomePage and open CalendarPage
+                            JFrame homeFrame = (JFrame) SwingUtilities.getWindowAncestor(card); // Get the parent frame (HomePage)
+                            homeFrame.dispose(); // Close the HomePage window
+
+                            // Open CalendarPage in the center of the screen
+                            CalendarPage.start(); // Ensure CalendarPage has a start() method that initializes it
                             break;
                         case 1:
-                            //Add re-direct to Cirurgia page
+                            // Redirect to Cirurgia page
                             JOptionPane.showMessageDialog(null, "Evento Cirurgia");
                             break;
                         case 2:
-                            //Add re-direct to Consulta page
+                            // Redirect to Consulta page
                             JOptionPane.showMessageDialog(null, "Evento Consulta");
                             break;
                         case 3:
-                            //Add re-direct to Evento page
+                            // Redirect to Evento page
                             JOptionPane.showMessageDialog(null, "Evento Evento");
                             break;
                         case 4:
-                            //Add re-direct to Tutor page
+                            // Redirect to Tutor page
                             JOptionPane.showMessageDialog(null, "Evento Tutor");
                             break;
                         case 5:
-                            //Add re-direct to Pets page
+                            // Redirect to Pets page
                             JOptionPane.showMessageDialog(null, "Evento Pets");
                             break;
                     }
@@ -123,7 +133,7 @@ public class HomePage {
         }
     }
 
-    private JPanel createTopPanel() {
+    public static JPanel createTopPanel() {
         JPanel topPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -139,11 +149,28 @@ public class HomePage {
 
         addHomeIconToTopPanel(topPanel);
 
+        JLabel clockLabel = new JLabel();
+        clockLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        clockLabel.setForeground(Color.WHITE);
+        clockLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        clockLabel.setBorder(BorderFactory.createEmptyBorder(30, 0, 0, 10));
+
+        topPanel.add(clockLabel, BorderLayout.EAST);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE d 'de' MMM HH:mm", new Locale("pt", "BR"));
+
+        Timer timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LocalDateTime now = LocalDateTime.now();
+                clockLabel.setText(now.format(formatter));
+            }
+        });
+        timer.start();
+
         return topPanel;
     }
-
-    private void addHomeIconToTopPanel(JPanel topPanel) {
-        URL homeIconUrl = getClass().getClassLoader().getResource("resources/homeicon.png");
+    static void addHomeIconToTopPanel(JPanel topPanel) {
+        URL homeIconUrl = HomePage.class.getClassLoader().getResource("resources/homeicon.png");
         if (homeIconUrl != null) {
             ImageIcon homeIcon = new ImageIcon(homeIconUrl);
             Image resizedImage = homeIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
@@ -224,7 +251,7 @@ public class HomePage {
         titleLabel.setBorder(new EmptyBorder(0, 10, 2, 10));
         textPanel.add(titleLabel);
 
-        JLabel timeLabel = createLabel(time, new Font("Arial", Font.PLAIN, 10));
+        JLabel timeLabel = createLabel(time, TIME_FONT);
         timeLabel.setBorder(new EmptyBorder(0, 10, 2, 10));
         textPanel.add(timeLabel);
 
@@ -294,6 +321,7 @@ public class HomePage {
 
         return gradientPanel;
     }
+
 
     public static void start() {
         JFrame frame = new JFrame("Home Page");
