@@ -1,4 +1,6 @@
-package Petshop;
+package Petshop.Pages;
+
+import Petshop.Utils.Hover;
 
 import javax.swing.*;
 import java.awt.*;
@@ -134,6 +136,8 @@ public class LoginPage {
         loginButton.setForeground(new Color(64, 64, 64));
         loginButton.setFont(new Font("Arial", Font.BOLD, 14));
         loginButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        Hover.addHandCursorOnHover(loginButton);
+
 
         loginButton.addActionListener(new ActionListener() {
             @Override

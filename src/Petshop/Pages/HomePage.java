@@ -1,4 +1,4 @@
-package Petshop;
+package Petshop.Pages;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
