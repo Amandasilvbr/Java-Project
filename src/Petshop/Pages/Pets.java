@@ -9,9 +9,8 @@ import java.awt.event.*;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.text.MaskFormatter;
 
-public class PetsPage {
+public class Pets {
     private static final int PANEL_WIDTH = 700;
     private static final int PANEL_HEIGHT = 630;
     private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 16);
@@ -21,7 +20,7 @@ public class PetsPage {
     private final DefaultListModel<String> petsListModel;
 
     // Construtor da página PetsPage
-    public PetsPage() {
+    public Pets() {
         petsListModel = new DefaultListModel<>();
         mainPanel = createMainPanel();
     }
@@ -226,7 +225,7 @@ public class PetsPage {
                 // Fecha a janela atual e abre a HomePage
                 JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(homeButton);
                 currentFrame.dispose();  // Fecha a janela atual
-                HomePage.start();  // Chama a HomePage, ou seja, página inicial
+                Home.start();  // Chama a HomePage, ou seja, página inicial
             }
         });
 
@@ -239,7 +238,7 @@ public class PetsPage {
     // Criar o ícone de casa
     private static ImageIcon createFooterIcon() {
         // Tentando carregar o ícone de casa usando getClass().getClassLoader()
-        URL homeIconUrl = PetsPage.class.getClassLoader().getResource("resources/home.png");
+        URL homeIconUrl = Pets.class.getClassLoader().getResource("resources/home.png");
 
         // Verificar se o arquivo foi carregado corretamente
         if (homeIconUrl != null) {
@@ -255,11 +254,11 @@ public class PetsPage {
     // Método para iniciar a página de Pets
     public static void start() {
         JFrame frame = new JFrame("Pets Page");
-        PetsPage petsPage = new PetsPage(); // Cria uma instância da página de Pets
+        Pets pets = new Pets(); // Cria uma instância da página de Pets
 
         JPanel petsPanel = new JPanel(new BorderLayout());
         petsPanel.add(new Header(true), BorderLayout.NORTH); // Adiciona o painel superior
-        petsPanel.add(petsPage.mainPanel, BorderLayout.CENTER); // Adiciona o painel principal da página de pets
+        petsPanel.add(pets.mainPanel, BorderLayout.CENTER); // Adiciona o painel principal da página de pets
 
         frame.setContentPane(petsPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

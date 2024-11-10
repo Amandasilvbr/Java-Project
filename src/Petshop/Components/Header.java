@@ -1,5 +1,7 @@
 package Petshop.Components;
 
+import Petshop.Pages.Home;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -26,8 +28,9 @@ public class Header extends JPanel {
         }
     }
 
+    // Adds the home icon to the header
     private void addHomeIcon() {
-        URL homeIconUrl = Petshop.Pages.HomePage.class.getClassLoader().getResource("resources/homeicon.png");
+        URL homeIconUrl = Home.class.getClassLoader().getResource("resources/homeicon.png");
         if (homeIconUrl != null) {
             ImageIcon homeIcon = new ImageIcon(homeIconUrl);
             Image resizedImage = homeIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
@@ -36,10 +39,11 @@ public class Header extends JPanel {
             JLabel homeIconLabel = new JLabel(resizedIcon);
             add(homeIconLabel, BorderLayout.WEST);
         } else {
-            System.out.println("Imagem homeicon não encontrada.");
+            System.out.println("Home icon image not found.");
         }
     }
 
+    // Adds the clock to the header
     private void addClock() {
         JLabel clockLabel = new JLabel();
         clockLabel.setFont(TIME_FONT);

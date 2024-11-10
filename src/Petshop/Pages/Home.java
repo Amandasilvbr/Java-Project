@@ -8,7 +8,7 @@ import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class HomePage {
+public class Home {
     private static final int PANEL_WIDTH = 800;
     private static final int PANEL_HEIGHT = 700;
     private static final Color TOP_PANEL_COLOR = new Color(30, 10, 60);
@@ -20,7 +20,7 @@ public class HomePage {
 
     private final JPanel mainPanel;
 
-    public HomePage() {
+    public Home() {
         mainPanel = createMainPanel();
     }
 
@@ -297,7 +297,7 @@ public class HomePage {
 
     public static void start() {
         JFrame frame = new JFrame("Home Page");
-        frame.setContentPane(new HomePage().mainPanel);
+        frame.setContentPane(new Home().mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);

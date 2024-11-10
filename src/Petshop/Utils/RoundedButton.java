@@ -6,59 +6,60 @@ import java.awt.geom.RoundRectangle2D;
 
 public class RoundedButton extends JButton {
 
-    // Construtor que recebe o rótulo do botão
+    // Constructor that takes the button label as a parameter
     public RoundedButton(String label) {
         super(label);
-        setContentAreaFilled(false);  // Impede que o fundo padrão seja pintado
-        setFocusPainted(false);       // Remove a borda de foco ao clicar
-        setBorderPainted(false);      // Remove a borda padrão do botão
-        setOpaque(false);             // Garante que o fundo não seja desenhado
+        setContentAreaFilled(false);  // Prevents the default background from being painted
+        setFocusPainted(false);       // Removes the focus border when the button is clicked
+        setBorderPainted(false);      // Removes the default button border
+        setOpaque(false);             // Ensures the background is not painted
     }
 
-    // Método para desenhar o botão
+    // Method to paint the button (custom design)
     @Override
     protected void paintComponent(Graphics g) {
-        // Cria um gráfico 2D
+        // Create a Graphics2D object for more advanced rendering
         Graphics2D g2 = (Graphics2D) g.create();
 
-        // Habilita anti-aliasing para um desenho mais suave
+        // Enable anti-aliasing for smoother drawing
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Define a cor do fundo do botão (personalizada)
-        g2.setColor(new Color(30, 10, 60));  // Cor personalizada
+        // Set the background color of the button (custom color)
+        g2.setColor(new Color(30, 10, 60));  // Custom color
 
-        // Desenha o fundo com bordas arredondadas
-        g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 15, 15));  // 30 é o raio da borda
+        // Draw the background with rounded corners
+        g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 15, 15));  // 15 is the border radius
 
-        // Define a cor da fonte como branca
+        // Set the font color to white
         g2.setColor(Color.WHITE);
 
-        // Define a fonte, caso deseje ajustar o tipo ou tamanho
+        // Set the font, using the button's font
         g2.setFont(getFont());
 
-        // Desenha o texto no centro do botão
+        // Draw the button text at the center
         FontMetrics fm = g2.getFontMetrics();
         String text = getText();
-        int x = (getWidth() - fm.stringWidth(text)) / 2;
-        int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
+        int x = (getWidth() - fm.stringWidth(text)) / 2;  // Calculate the x position to center the text
+        int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();  // Calculate the y position to center the text
 
+        // Draw the text
         g2.drawString(text, x, y);
 
-        // Libera recursos gráficos após o uso
+        // Dispose of the Graphics2D object to release resources
         g2.dispose();
     }
 
-    // Método para desenhar a borda (não será usado neste caso, pois queremos que o botão não tenha borda)
+    // Method to paint the border (not used in this case because we want no border)
     @Override
     protected void paintBorder(Graphics g) {
-        // Não desenha borda
+        // Do not draw a border
     }
 
+    // Method to return the preferred size of the button
     @Override
     public Dimension getPreferredSize() {
-        // Retorna o tamanho preferido para o botão
+        // Get the preferred size and return it
         Dimension preferredSize = super.getPreferredSize();
-        return new Dimension(preferredSize.width + 20, preferredSize.height + 20); // Adiciona algum espaço para bordas arredondadas
+        return new Dimension(preferredSize.width, preferredSize.height);
     }
 }
-

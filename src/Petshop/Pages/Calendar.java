@@ -66,8 +66,8 @@ public class Calendar extends JFrame {
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
 
         // Adds the footer panel
-        Footer footer = new Footer();  // Cria uma instância de Footer
-        bottomPanel.add(footer.createFooterPanel());  // Agora você pode chamar o método de instância
+        Footer footer = new Footer();
+        bottomPanel.add(footer.createFooterPanel());
 
         // Add the mainPanel and bottomPanel to the window
         add(mainPanel, BorderLayout.CENTER);
@@ -80,45 +80,46 @@ public class Calendar extends JFrame {
     // Create the panel for the month and year title
     private JPanel createMonthYearPanel() {
         JPanel monthYearPanel = new JPanel();
-        monthYearPanel.setBackground(new Color(115, 0, 255));  // Faixa de cor personalizada para o mês e ano
-        monthYearPanel.setPreferredSize(new Dimension(800, 40)); // Ajuste o tamanho conforme necessário
+        monthYearPanel.setBackground(new Color(115, 0, 255));
+        monthYearPanel.setPreferredSize(new Dimension(800, 40));
 
-        // Inicializa o título e centraliza
-        title = new JLabel("", SwingConstants.CENTER);  // Inicializa o título vazio
+        // Initializes the title and centers it
+        title = new JLabel("", SwingConstants.CENTER);  // Initializes the empty title
         title.setFont(new Font("Arial", Font.PLAIN, 12));
-        title.setForeground(Color.WHITE); // Cor do texto em branco
+        title.setForeground(Color.WHITE);
         monthYearPanel.add(title);
 
         return monthYearPanel;
     }
+
     // Creates the navigation panel with buttons to navigate months and the month title
     private JPanel createNavPanel() {
-        // Pincipal panel that contains all the components
+        // Main panel that contains all the components
         JPanel navPanel = new JPanel(new BorderLayout());
         navPanel.setPreferredSize(new Dimension(700, 50));
 
         // Left panel with <> buttons
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton prevButton = new RoundedButton("<");
-        prevButton.setPreferredSize(new Dimension(10, 5));
+        prevButton.setPreferredSize(new Dimension(30, 25));
         prevButton.addActionListener(e -> navigateMonth(-1));
         Hover.addHandCursorOnHover(prevButton);
         leftPanel.add(prevButton);
 
         JButton nextButton = new RoundedButton(">");
-        nextButton.setPreferredSize(new Dimension(10, 5));
+        nextButton.setPreferredSize(new Dimension(30, 25));
         nextButton.addActionListener(e -> navigateMonth(1));
         Hover.addHandCursorOnHover(nextButton);
         leftPanel.add(nextButton);
 
         // Central panel will no longer contain the title
         JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        centerPanel.add(new JLabel("")); // Apenas espaço vazio agora
+        centerPanel.add(new JLabel("")); // Just empty space now
 
-        // "Novo evento" button with right align
+        // "New Event" button with right align
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton newEventButton = new RoundedButton("Novo Evento");
-        newEventButton.setPreferredSize(new Dimension(90, 5));
+        newEventButton.setPreferredSize(new Dimension(110, 25));
         newEventButton.addActionListener(e -> createNewEvent());
         Hover.addHandCursorOnHover(newEventButton);
 
@@ -192,8 +193,8 @@ public class Calendar extends JFrame {
         daysPanel.removeAll();
         calendar.set(java.util.Calendar.DAY_OF_MONTH, 1);
 
-        int month = calendar.get(java.util.Calendar.MONTH) + 1; // Mês atual
-        int year = calendar.get(java.util.Calendar.YEAR); // Ano atual
+        int month = calendar.get(java.util.Calendar.MONTH) + 1;
+        int year = calendar.get(java.util.Calendar.YEAR);
 
         title.setText(month +"/"+ year);
 
@@ -218,7 +219,6 @@ public class Calendar extends JFrame {
         daysPanel.revalidate();
         daysPanel.repaint();
     }
-
 
     // Creates the panel for each day, including event information if applicable
     private JPanel createDayPanel(int day) {
@@ -272,7 +272,7 @@ public class Calendar extends JFrame {
         dayPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Cria botões personalizados para o diálogo
+                // Creates custom buttons for the dialog
                 Object[] options = {"Fechar", "Excluir Evento"};
                 int result = JOptionPane.showOptionDialog(Calendar.this,
                         "Evento: " + events.get(day),
@@ -281,17 +281,14 @@ public class Calendar extends JFrame {
                         JOptionPane.INFORMATION_MESSAGE,
                         null, options, options[0]);
 
-                // Verifica a opção selecionada
-                if (result == 1) { // Se a opção "Excluir Evento" for selecionada
+                // Checks the selected option
+                if (result == 1) { // If the "Excluir Evento" option is selected
                     events.remove(day);
-                    updateCalendar(); // Atualiza o calendário para refletir a remoção do evento
+                    updateCalendar(); // Updates the calendar to reflect the event removal
                 }
             }
         });
     }
-
-
-
 
     // Starts the Calendar and displays it
     public static void start() {
@@ -299,7 +296,6 @@ public class Calendar extends JFrame {
         // Make the calendar page visible
         calendarPanel.setVisible(true);
         calendarPanel.setLocationRelativeTo(null);
-
     }
 
     // Main method to launch the calendar page
