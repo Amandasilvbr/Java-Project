@@ -1,6 +1,4 @@
-package com.petshop.core;
-
-import com.petshop.utils.Utils;
+package com.petshop.core.pages;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -10,7 +8,7 @@ import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class HomePage {
+public class Home {
     private static final int PANEL_WIDTH = 800;
     private static final int PANEL_HEIGHT = 700;
     private static final Color TOP_PANEL_COLOR = new Color(30, 10, 60);
@@ -22,7 +20,7 @@ public class HomePage {
 
     private final JPanel mainPanel;
 
-    public HomePage() {
+    public Home() {
         mainPanel = createMainPanel();
     }
 
@@ -84,11 +82,11 @@ public class HomePage {
             card.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    // TODO: Add correct route to events
                     switch (i) {
                         case 0:
                             //Add re-direct to Calendario page
-                            JOptionPane.showMessageDialog(null, "Evento Calendário");
+                            SwingUtilities.getWindowAncestor(card).dispose();
+                            Calendar.start();
                             break;
                         case 1:
                             //Add re-direct to Cirurgia page
@@ -105,6 +103,8 @@ public class HomePage {
                         case 4:
                             //Add re-direct to Tutor page
                             JOptionPane.showMessageDialog(null, "Evento Tutor");
+                            SwingUtilities.getWindowAncestor(card).dispose();
+                            Tutor.start();
                             break;
                         case 5:
                             //Add re-direct to Pets page
@@ -146,7 +146,7 @@ public class HomePage {
     }
 
     private void addHomeIconToTopPanel(JPanel topPanel) {
-        URL homeIconUrl = getClass().getClassLoader().getResource("homeicon.png");
+        URL homeIconUrl = getClass().getClassLoader().getResource("homeIcon.png");
         if (homeIconUrl != null) {
             ImageIcon homeIcon = new ImageIcon(homeIconUrl);
             Image resizedImage = homeIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
@@ -300,8 +300,11 @@ public class HomePage {
 
     public static void start() {
         JFrame frame = new JFrame("Home Page");
-        frame.setContentPane(new HomePage().mainPanel);
-
-        Utils.defaultPage(frame);
+        frame.setContentPane(new Home().mainPanel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        frame.setResizable(false);
     }
 }

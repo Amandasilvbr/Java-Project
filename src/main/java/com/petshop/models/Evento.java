@@ -4,13 +4,11 @@ public class Evento {
     private int id;
     private String date;
     private String descricao;
-    private String titulo;
     private Vet responsavel;
-    public Evento(int id, String date, String descricao, String titulo, Vet responsavel) {
+    public Evento(int id, String date, String descricao, Vet responsavel) {
         this.id = id;
         this.date = date;
         this.descricao = descricao;
-        this.titulo = titulo;
         this.responsavel = responsavel;
     }
     public int getId() {
@@ -30,12 +28,6 @@ public class Evento {
     }
     public void setDescricao(String descricao) {
         this.descricao = descricao;
-    }
-    public String getTitulo() {
-        return titulo;
-    }
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
     }
     public Vet getResponsavel() {
         return responsavel;

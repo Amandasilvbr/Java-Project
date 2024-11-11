@@ -85,7 +85,7 @@ public class QueryDB extends MethodDB {
 
     public static ArrayList<Evento> getAllEvento() {
         ArrayList<Evento> eventArrayList = new ArrayList<>();
-        String query = "SELECT id, date, descricao, titulo, responsavel FROM evento";
+        String query = "SELECT id, date, descricao, responsavel FROM evento";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             ResultSet rs = stmt.executeQuery();
 
@@ -94,7 +94,6 @@ public class QueryDB extends MethodDB {
                         rs.getInt("id"),
                         rs.getString("date"),
                         rs.getString("descricao"),
-                        rs.getString("titulo"),
                         getAllVet().stream().filter(vet -> {
                             try {
                                 return vet.getCpf().equals(rs.getString("responsavel"));

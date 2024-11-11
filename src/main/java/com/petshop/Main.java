@@ -1,5 +1,5 @@
 package com.petshop;
-import com.petshop.core.LoginPage;
+import com.petshop.core.pages.Login;
 import com.petshop.db.InsertDB;
 import com.petshop.db.QueryDB;
 import com.petshop.db.SetDB;
@@ -12,15 +12,15 @@ public class Main {
 
     public static void main(String[] in) throws SQLException {
         new SetDB();
-        LoginPage.start();
-        InsertDB.insertTutor(
-                "49598299821",
-                "Gabriel Siqueira",
-                "2004-05-18",
-                "Rua Marijó",
-                "+55 11 910518642",
-                "rsiqueira@barbie.com"
-        );
+        Login.start();
+//        InsertDB.insertTutor(
+//                "49598299821",
+//                "Gabriel Siqueira",
+//                "2004-05-18",
+//                "Rua Marijó",
+//                "+55 11 910518642",
+//                "rsiqueira@barbie.com"
+//        );
         InsertDB.insertVeterinario(
                 "49598299822",
                 "Carlos Manuel",
@@ -31,34 +31,34 @@ public class Main {
                 "Dentista",
                 "13251361"
         );
-
-        InsertDB.insertPet(
-                "toto",
-                "2022-04-01",
-                "spitz",
-                "cachorro",
-                "49598299821"
-        );
-        InsertDB.insertCirurgia(
-                "Uretra",
-                "Cirurgia complexa",
-                "2024-12-23",
-                "49598299822",
-                1
-        );
-        InsertDB.insertConsulta(
-                "Emergencial",
-                "Emergencia camelo",
-                "2024-11-08",
-                "49598299822",
-                1
-        );
-        InsertDB.insertEvento(
-                "2024-12-10",
-                "Confraternização",
-                "Confra",
-                "49598299822"
-        );
+//
+//        InsertDB.insertPet(
+//                "toto",
+//                "2022-04-01",
+//                "spitz",
+//                "cachorro",
+//                "49598299821"
+//        );
+//        InsertDB.insertCirurgia(
+//                "Uretra",
+//                "Cirurgia complexa",
+//                "2024-12-23",
+//                "49598299822",
+//                1
+//        );
+//        InsertDB.insertConsulta(
+//                "Emergencial",
+//                "Emergencia camelo",
+//                "2024-11-08",
+//                "49598299822",
+//                1
+//        );
+//        InsertDB.insertEvento(
+//                "2024-12-10",
+//                "Confraternização",
+//                "Confra",
+//                "49598299822"
+//        );
 
         ArrayList<Vet> vet = QueryDB.getAllVet();
         ArrayList<Pet> pet = QueryDB.getAllPet();
@@ -81,7 +81,7 @@ public class Main {
 
         for (Evento e : evento) {
             System.out.println("evento");
-            System.out.println(e.getTitulo());
+            System.out.println(e.getDescricao());
             System.out.println(e.getResponsavel().getName());
         }
 

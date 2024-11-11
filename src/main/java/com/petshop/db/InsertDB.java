@@ -70,22 +70,21 @@ public class InsertDB extends MethodDB{
         }
     }
 
-    public static void insertEvento(String date, String descricao, String titulo, String responsavel) {
-        String insertCommand = "INSERT INTO evento (date, descricao, titulo, responsavel) "
-                + "VALUES (?, ?, ?, ?)";
+    public static void insertEvento(String date, String descricao, String responsavel) {
+        String insertCommand = "INSERT INTO evento (date, descricao, responsavel) "
+                + "VALUES (?, ?, ?)";
 
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(insertCommand)) {
             // Set parameters for the query
             stmt.setString(1, date);
             stmt.setString(2, descricao);
-            stmt.setString(3, titulo);
-            stmt.setString(4, responsavel);
+            stmt.setString(3, responsavel);
 
             // Execute the insert command
             stmt.executeUpdate();
-            System.out.println("Event " + titulo + " successfully inserted.");
+            System.out.println("Event " + descricao + " successfully inserted.");
         } catch (SQLException e) {
-            System.out.println("Error inserting " + titulo + ": " + e.getMessage());
+            System.out.println("Error inserting " + descricao + ": " + e.getMessage());
         }
     }
 

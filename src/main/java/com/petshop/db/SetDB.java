@@ -35,7 +35,6 @@ public class SetDB extends MethodDB{
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "date DATE NOT NULL, "
                 + "descricao TEXT NOT NULL, "
-                + "titulo VARCHAR(30) NOT NULL, "
                 + "responsavel VARCHAR(11) NOT NULL, "
                 + "FOREIGN KEY (responsavel) REFERENCES veterinario (cpf));";
 
