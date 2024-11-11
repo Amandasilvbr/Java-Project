@@ -26,6 +26,6 @@ public class Validators {
 
     // Function to check if the string contains only letters
     public static boolean isString(String str) {
-        return str != null && str.matches("[a-zA-Z]+");
+        return str != null && str.trim().matches("[a-zA-Z\\s]+");
     }
 }

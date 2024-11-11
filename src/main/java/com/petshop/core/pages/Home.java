@@ -1,11 +1,16 @@
 package com.petshop.core.pages;
 
+import com.petshop.db.DeleteDB;
+import com.petshop.db.QueryDB;
+import com.petshop.models.Evento;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Home {
@@ -102,13 +107,13 @@ public class Home {
                             break;
                         case 4:
                             //Add re-direct to Tutor page
-                            JOptionPane.showMessageDialog(null, "Evento Tutor");
                             SwingUtilities.getWindowAncestor(card).dispose();
                             Tutor.start();
                             break;
                         case 5:
                             //Add re-direct to Pets page
-                            JOptionPane.showMessageDialog(null, "Evento Pets");
+                            SwingUtilities.getWindowAncestor(card).dispose();
+                            Pets.start();
                             break;
                     }
                 }
@@ -261,22 +266,30 @@ public class Home {
         agendaPanel.add(agendaTitle);
         agendaPanel.add(Box.createVerticalStrut(20));
 
-        String[][] events = {
-                {"Consulta com o Dr. Abulebebe", "10:00 AM - 11:00 AM"},
-                {"Evento de vacinação", "2:00 PM - 3:00 PM"},
-                {"Consulta com a Dra. Ana", "4:00 PM - 5:00 PM"},
-                {"Consulta com a Dra. Ana", "4:00 PM - 5:00 PM"},
-                {"Consulta com a Dra. Ana", "4:00 PM - 5:00 PM"},
-                {"Consulta com a Dra. Ana", "4:00 PM - 5:00 PM"},
-                {"Consulta com a Dra. Ana", "4:00 PM - 5:00 PM"},
-                {"Consulta com a Dra. Ana", "4:00 PM - 5:00 PM"},
-                {"Consulta com a Dra. Ana", "4:00 PM - 5:00 PM"},
-                {"Consulta com a Dra. Ana", "4:00 PM - 5:00 PM"},
-        };
-
-        for (String[] event : events) {
-            agendaPanel.add(createCards(event[0], event[1], 20, 10, 5, 10, null));
-            agendaPanel.add(Box.createVerticalStrut(11));
+        for (Evento evento : QueryDB.getAllEvento()) {
+            int dayEvento = LocalDate.parse(evento.getDate()).getDayOfMonth();
+            int dayToday = LocalDate.now().getDayOfMonth();
+            if ( dayEvento == dayToday) {
+                JPanel card = createCards(evento.getDescricao(), evento.getResponsavel().getName(), 20, 10, 5, 10, null);
+                card.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        Object[] options = {"Fechar"};
+                        JOptionPane.showOptionDialog(
+                                null,
+                                "Evento: " + evento.getDescricao() + "\nResponsável: " + evento.getResponsavel().getName(),
+                                "Detalhes do Evento",
+                                JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.INFORMATION_MESSAGE,
+                                null, options, options[0]
+                        );
+                    }
+                });
+                agendaPanel.add(card);
+                agendaPanel.add(Box.createVerticalStrut(11));
+            }
+//            agendaPanel.add(createCards(event[0], event[1], 20, 10, 5, 10, null));
+//            agendaPanel.add(Box.createVerticalStrut(11));
         }
 
         JPanel gradientPanel = new JPanel() {

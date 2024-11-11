@@ -1,275 +1,387 @@
 package com.petshop.core.pages;
 
-import com.petshop.core.utils.*;
 import com.petshop.core.components.*;
+import com.petshop.core.utils.*;
+import com.petshop.db.DeleteDB;
+import com.petshop.db.InsertDB;
+import com.petshop.db.QueryDB;
+import com.petshop.models.Pet;
+
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.*;
-import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.io.File;
 
-public class Pets {
-    private static final int PANEL_WIDTH = 700;
-    private static final int PANEL_HEIGHT = 630;
-    private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 16);
-    private static final Font LABEL_FONT = new Font("Arial", Font.PLAIN, 12);
+public class Pets extends JFrame {
 
-    private final JPanel mainPanel;
-    private final DefaultListModel<String> petsListModel;
+    private static final int PANEL_WIDTH = 800;
+    private static final int PANEL_HEIGHT = 700;
 
-    // Construtor da página PetsPage
+    private JTextField tutorField, petNameField, racaField, birthDateField, searchField, especieField;
+    private JComboBox<String> petTypeCombo;
+    private JButton saveButton, searchButton;
+    private JTable petsListTable;
+    private DefaultTableModel tableModel;
+    private ArrayList<String[]> pets;
+    private JLabel imageLabel;
+    private String currentPetImagePath = "";
+
     public Pets() {
-        petsListModel = new DefaultListModel<>();
-        mainPanel = createMainPanel();
+        pets = new ArrayList<>();
+        tableModel = new DefaultTableModel(new Object[]{"ID", "Nome", "Tutor", "..."}, 0);
+
+        setTitle("Cadastro de pets");
+        setSize(PANEL_WIDTH, PANEL_HEIGHT);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        JPanel headerPanel = new JPanel();
+        headerPanel.add(new Header(true));
+
+        Footer footer = new Footer();
+        JPanel footerPanel = footer.createFooterPanel();
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setDividerLocation(PANEL_WIDTH / 2);
+
+        JPanel formPanel = createFormPanel();
+        JPanel listPanel = createListPanel();
+
+        splitPane.setLeftComponent(formPanel);
+        splitPane.setRightComponent(listPanel);
+
+        add(headerPanel, BorderLayout.NORTH);
+        add(splitPane, BorderLayout.CENTER);
+        add(footerPanel, BorderLayout.PAGE_END);
     }
 
-    // Método para criar o painel principal
-    private JPanel createMainPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
-        panel.setBorder(BorderFactory.createEmptyBorder());
+    private JPanel createFormPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder("Formulário de Cadastro"));
 
-        // Painel para o título e botões
-        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        titlePanel.add(new JLabel("Gerenciamento de Pets", JLabel.CENTER));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.gridx = 0;
+        gbc.anchor = GridBagConstraints.WEST;
 
-        // Painel para cadastro de novo pet
-        JPanel addPetPanel = createAddPetPanel();
+        tutorField = createTextField();
+        birthDateField = createTextField();
+        petNameField = createTextField();
+        racaField = createTextField();
+        especieField = createTextField();
 
-        // Footer com ícone de casa
-        JPanel footerPanel = createFooterPanel();
+        addFieldToPanel(panel, gbc, "Nome do Pet", petNameField);
+        addFieldToPanel(panel, gbc, "CPF do tutor", tutorField);
+        addFieldToPanel(panel, gbc, "Espécie", especieField);
+        addFieldToPanel(panel, gbc, "Raça", racaField);
+        addFieldToPanel(panel, gbc, "Data de Nascimento", birthDateField);
 
-        // Adiciona os painéis ao painel principal
-        panel.add(titlePanel, BorderLayout.NORTH);
-        panel.add(addPetPanel, BorderLayout.WEST);
-        panel.add(footerPanel, BorderLayout.SOUTH);  // Adiciona o footer na parte inferior
+        // Adiciona o campo de upload de imagem
+        addImageUploadField(panel, gbc);
+
+        saveButton = new RoundedButton("Salvar cadastro");
+        saveButton.addActionListener(e -> saveData());
+        gbc.gridwidth = 2;
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.anchor = GridBagConstraints.CENTER;
+        panel.add(saveButton, gbc);
 
         return panel;
     }
 
-    // Painel de cadastro de novo pet
-    private JPanel createAddPetPanel() {
-        JPanel addPetPanel = new JPanel();
-        addPetPanel.setLayout(new GridBagLayout()); // Usando GridBagLayout para alinhar os componentes
-        GridBagConstraints gbc = new GridBagConstraints();
-        addPetPanel.setPreferredSize(new Dimension(350, PANEL_HEIGHT)); // Ajuste do tamanho
+    private JPanel createListPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createTitledBorder("Lista de Pets"));
 
-        // Define a largura e altura dos campos de texto
-        JTextField petIdField = new JTextField(15);
-        JTextField petNameField = new JTextField(15);
-        JPanel petBirthPanel = createDatePanel(); // Painel para o campo de data com dropdown
-        JTextField petBreedField = new JTextField(15);
-        JTextField petSpeciesField = new JTextField(15);
-        JTextField petTutorField = new JTextField(15); // Campo para CPF do tutor
+        searchField = new JTextField();
+        searchButton = new RoundedButton("Pesquisar");
+        searchButton.addActionListener(e -> searchPets());
+        searchButton.setPreferredSize(new Dimension(80, 15));
 
-        // Adicionando bordas arredondadas aos campos de texto
-        petIdField.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1, true));
-        petNameField.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1, true));
-        petBreedField.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1, true));
-        petSpeciesField.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1, true));
-        petTutorField.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1, true));
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        searchPanel.add(searchButton, BorderLayout.EAST);
 
-        // Títulos dos campos
-        JLabel idLabel = new JLabel("ID:");
-        JLabel nameLabel = new JLabel("Nome:");
-        JLabel birthLabel = new JLabel("Nascimento:");
-        JLabel breedLabel = new JLabel("Raça:");
-        JLabel speciesLabel = new JLabel("Espécie:");
-        JLabel tutorLabel = new JLabel("Tutor (CPF):");
-
-        // Alinhando os campos de texto com GridBagConstraints
-        gbc.insets = new Insets(10, 10, 10, 10); // Espaçamento entre os componentes
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        addPetPanel.add(idLabel, gbc);
-        gbc.gridx = 1;
-        addPetPanel.add(petIdField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        addPetPanel.add(nameLabel, gbc);
-        gbc.gridx = 1;
-        addPetPanel.add(petNameField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        addPetPanel.add(birthLabel, gbc);
-        gbc.gridx = 1;
-        addPetPanel.add(petBirthPanel, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        addPetPanel.add(breedLabel, gbc);
-        gbc.gridx = 1;
-        addPetPanel.add(petBreedField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        addPetPanel.add(speciesLabel, gbc);
-        gbc.gridx = 1;
-        addPetPanel.add(petSpeciesField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        addPetPanel.add(tutorLabel, gbc);
-        gbc.gridx = 1;
-        addPetPanel.add(petTutorField, gbc);
-
-        // Botão para cadastrar pet
-        JButton addButton = new JButton("Cadastrar Pet");
-        addButton.addActionListener(new ActionListener() {
+        petsListTable = new JTable(tableModel) {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                // Ação de cadastro do pet
-                String petId = petIdField.getText();
-                String petName = petNameField.getText();
-                String petBirth = getSelectedDate(petBirthPanel);
-                String petBreed = petBreedField.getText();
-                String petSpecies = petSpeciesField.getText();
-                String petTutor = petTutorField.getText();
+            public boolean isCellEditable(int row, int column) {
+                return column == 3;
+            }
+        };
+        petsListTable.getColumnModel().getColumn(3).setCellRenderer(new LabelRenderer());
+        petsListTable.getColumnModel().getColumn(3).setCellEditor(new LabelEditor(new JCheckBox()));
+        petsListTable.getColumnModel().getColumn(3).setPreferredWidth(20);
+        petsListTable.getColumnModel().getColumn(3).setMaxWidth(20);
+        petsListTable.getColumnModel().getColumn(3).setMinWidth(20);
+        petsListTable.getColumnModel().getColumn(3).setResizable(false);
 
-                // Validando campos
-                if (petId.isEmpty() || petName.isEmpty() || petBirth.isEmpty() || petBreed.isEmpty() || petSpecies.isEmpty() || petTutor.isEmpty()) {
-                    JOptionPane.showMessageDialog(addPetPanel, "Por favor, preencha todos os campos.");
-                } else if (!validateCPF(petTutor)) {
-                    JOptionPane.showMessageDialog(addPetPanel, "CPF inválido. Por favor, insira um CPF válido.");
-                } else {
-                    petsListModel.addElement(petName); // Adiciona o nome do pet na lista
-                    petIdField.setText("");
-                    petNameField.setText("");
-                    petBreedField.setText("");
-                    petSpeciesField.setText("");
-                    petTutorField.setText("");
-                    JOptionPane.showMessageDialog(addPetPanel, "Pet cadastrado com sucesso!");
+        JScrollPane scrollPane = new JScrollPane(petsListTable);
+        petsListTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                int row = petsListTable.rowAtPoint(evt.getPoint());
+                int col = petsListTable.columnAtPoint(evt.getPoint());
+                if (col == 3 && row >=0){
+                    String petID = String.valueOf(petsListTable.getValueAt(row, 0));
+                    DeleteDB.delete("pet", petID);
+                }
+                else if (row >= 0) {
+                    String petID = String.valueOf(petsListTable.getValueAt(row, 0));
+                    openPetDetailsDialog(petID);
+                }
+            }
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = petsListTable.rowAtPoint(e.getPoint());
+                int col = petsListTable.columnAtPoint(e.getPoint());
+
+                if (col == 2 && row >= 0) {
+                    String cpfValue = petsListTable.getValueAt(row, 1).toString();
+                    DeleteDB.delete("tutor", cpfValue);
+                    searchPets();
                 }
             }
         });
 
-        // Adicionando o botão no painel
+        panel.add(searchPanel, BorderLayout.NORTH);
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    private JTextField createTextField() {
+        JTextField field = new JTextField();
+        field.setPreferredSize(new Dimension(200, 20));
+        field.setFont(new Font("Arial", Font.PLAIN, 14));
+        return field;
+    }
+
+    private void saveData() {
+        String tutor = tutorField.getText().trim();
+        String especie = especieField.getText();
+        String raca = racaField.getText();
+        String birthDate = birthDateField.getText().trim();
+        String petName = petNameField.getText().trim();
+
+        if (tutor.isEmpty() || !Validators.validarCPF(tutor)) {
+            JOptionPane.showMessageDialog(this, "O CPF do tutor é obrigatório e deve conter 11 digitos.");
+            return;
+        }
+
+        if (especie.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Espécie é obrigatória.");
+            return;
+        }
+
+        if (raca.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Raça é obrigatória.");
+            return;
+        }
+
+        if (birthDate.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Data de nascimento é obrigatória.");
+            return;
+        }
+
+        if (petName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nome do pet é obrigatório.");
+            return;
+        }
+
+
+        int petId = InsertDB.insertPet(
+                petName,
+                birthDate,
+                raca,
+                especie,
+                currentPetImagePath,
+                tutor
+        );
+        String[] data = new String[]{String.valueOf(petId), petName, tutor, "X"};
+        tableModel.addRow(data);
+        JOptionPane.showMessageDialog(this, "Dados salvos com sucesso!");
+
+        clearForm();
+    }
+
+    private void searchPets() {
+        String search = searchField.getText().trim().toLowerCase();
+        tableModel.setRowCount(0);
+        for (Pet pet : QueryDB.getAllPet()) {
+            if (pet.getName().toLowerCase().contains(search)) {
+                String[] petData = {String.valueOf(pet.getId()), pet.getName(), pet.getTutor().getCpf(), "X"};
+                tableModel.addRow(petData);
+            }
+        }
+    }
+
+    private void openPetDetailsDialog(String petId) {
+        for (Pet pet : QueryDB.getAllPet()) {
+            if (petId.equals(String.valueOf(pet.getId()))) {
+                // Criar o JDialog para os detalhes do pet
+                JDialog petDetailsDialog = new JDialog(this, "Detalhes do Pet", true);
+                petDetailsDialog.setSize(800, 500);
+                petDetailsDialog.setLayout(new BorderLayout());
+
+                JPanel headerPanel = new JPanel();
+                headerPanel.add(new Header(false));
+                petDetailsDialog.add(headerPanel, BorderLayout.NORTH);
+
+                JPanel detailsPanel = new JPanel(new GridBagLayout());
+                detailsPanel.setBorder(BorderFactory.createTitledBorder("Informações do Pet"));
+
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.insets = new Insets(5, 5, 5, 5);
+                gbc.gridx = 0;
+                gbc.anchor = GridBagConstraints.WEST;
+
+                JLabel petNameLabel = new JLabel(pet.getName());
+                JLabel tutorCpfLabel = new JLabel(pet.getTutor().getCpf());
+                JLabel especieLabel = new JLabel(pet.getEspecie());
+                JLabel racaLabel = new JLabel(pet.getRaca());
+                JLabel birthDateLabel = new JLabel(pet.getBorn());
+
+                addFieldToPanel(detailsPanel, gbc, "Nome do Pet", petNameLabel);
+                addFieldToPanel(detailsPanel, gbc, "CPF do Tutor", tutorCpfLabel);
+                addFieldToPanel(detailsPanel, gbc, "Espécie", especieLabel);
+                addFieldToPanel(detailsPanel, gbc, "Raça", racaLabel);
+                addFieldToPanel(detailsPanel, gbc, "Data de Nascimento", birthDateLabel);
+
+                JPanel imagePanel = new JPanel();
+                imagePanel.setLayout(new BorderLayout());
+
+                String imagePath = pet.getFilepath();
+                JLabel imageLabel = new JLabel();
+
+                if (!imagePath.isEmpty()) {
+                    File imageFile = new File(imagePath);
+                    if (imageFile.exists() && imageFile.isFile()) {
+                        ImageIcon imageIcon = new ImageIcon(imagePath);
+                        Image image = imageIcon.getImage(); // Obtém a imagem
+                        Image scaledImage = image.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+                        imageLabel.setIcon(new ImageIcon(scaledImage));
+                    } else {
+                        imageLabel.setText("Imagem não encontrada");
+                    }
+                } else {
+                    imageLabel.setText("Imagem não disponível");
+                }
+
+                imagePanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+                imagePanel.add(imageLabel, BorderLayout.CENTER);
+
+                JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, imagePanel, detailsPanel);
+                splitPane.setDividerLocation(300);
+                splitPane.setDividerSize(0);
+                splitPane.setEnabled(false);
+                splitPane.setResizeWeight(0.5);
+
+                splitPane.setResizeWeight(0.5);
+
+                petDetailsDialog.add(splitPane, BorderLayout.CENTER);
+
+                JButton closeButton = new JButton("Fechar");
+                closeButton.addActionListener(e -> petDetailsDialog.dispose());
+                petDetailsDialog.add(closeButton, BorderLayout.SOUTH);
+
+                petDetailsDialog.setLocationRelativeTo(null);
+
+                petDetailsDialog.setVisible(true);
+            }
+        }
+
+
+
+    }
+
+    private void addFieldToPanel(JPanel panel, GridBagConstraints gbc, String labelText, Component field) {
+        gbc.gridy++;
         gbc.gridx = 0;
-        gbc.gridy = 6;
-        gbc.gridwidth = 2; // O botão ocupa as duas colunas
-        addPetPanel.add(addButton, gbc);
-
-        return addPetPanel;
+        panel.add(new JLabel(labelText), gbc);
+        gbc.gridx = 1;
+        panel.add(field, gbc);
     }
 
-    // Método para criar um painel com dropdowns de data
-    private JPanel createDatePanel() {
-        JPanel datePanel = new JPanel();
-        JComboBox<String> dayComboBox = new JComboBox<>();
-        JComboBox<String> monthComboBox = new JComboBox<>();
-        JComboBox<String> yearComboBox = new JComboBox<>();
+    private void addImageUploadField(JPanel panel, GridBagConstraints gbc) {
+        gbc.gridy++;
+        gbc.gridx = 0;
+        panel.add(new JLabel("Imagem do Pet"), gbc);
 
-        // Preenchendo o JComboBox de dias
-        for (int i = 1; i <= 31; i++) {
-            dayComboBox.addItem(String.format("%02d", i));
-        }
+        gbc.gridx = 1;
+        JButton uploadButton = new JButton("Upload");
+        imageLabel = new JLabel();
+        imageLabel.setPreferredSize(new Dimension(100, 100));
 
-        // Preenchendo o JComboBox de meses
-        String[] months = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
-        for (String month : months) {
-            monthComboBox.addItem(month);
-        }
-
-        // Preenchendo o JComboBox de anos
-        for (int i = 1900; i <= 2024; i++) {
-            yearComboBox.addItem(String.valueOf(i));
-        }
-
-        datePanel.add(dayComboBox);
-        datePanel.add(monthComboBox);
-        datePanel.add(yearComboBox);
-
-        return datePanel;
-    }
-
-    // Método para pegar a data selecionada do painel
-    private String getSelectedDate(JPanel datePanel) {
-        JComboBox<String> dayComboBox = (JComboBox<String>) datePanel.getComponent(0);
-        JComboBox<String> monthComboBox = (JComboBox<String>) datePanel.getComponent(1);
-        JComboBox<String> yearComboBox = (JComboBox<String>) datePanel.getComponent(2);
-
-        return dayComboBox.getSelectedItem() + "/" + monthComboBox.getSelectedItem() + "/" + yearComboBox.getSelectedItem();
-    }
-
-    // Validação do CPF (simples)
-    private boolean validateCPF(String cpf) {
-        String cpfRegex = "^[0-9]{11}$";
-        Pattern pattern = Pattern.compile(cpfRegex);
-        Matcher matcher = pattern.matcher(cpf);
-        return matcher.matches();
-    }
-
-    // Criar o painel de footer
-    static JPanel createFooterPanel() {
-        JPanel footerPanel = new JPanel(new BorderLayout());
-        footerPanel.setPreferredSize(new Dimension(PANEL_WIDTH, 50));
-        footerPanel.setBackground(new Color(30, 10, 60)); // Cor de fundo similar ao header
-
-        // Ícone de casa na margem esquerda
-        JButton homeButton = new JButton();
-        homeButton.setIcon(createFooterIcon());
-        homeButton.setContentAreaFilled(false);  // Remove o fundo do botão
-        homeButton.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 15));
-
-        // Adicionando o efeito de hover para mudar o cursor para mão
-        Hover.addHandCursorOnHover(homeButton);
-
-        // Ação do botão home
-        homeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Fecha a janela atual e abre a HomePage
-                JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(homeButton);
-                currentFrame.dispose();  // Fecha a janela atual
-                Home.start();  // Chama a HomePage, ou seja, página inicial
+        uploadButton.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            int result = fileChooser.showOpenDialog(this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                ImageIcon imageIcon = new ImageIcon(fileChooser.getSelectedFile().getPath());
+                Image scaledImage = imageIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+                imageLabel.setIcon(new ImageIcon(scaledImage));
+                currentPetImagePath = fileChooser.getSelectedFile().getPath();
             }
         });
 
-        // Adiciona o ícone de casa ao footer
-        footerPanel.add(homeButton, BorderLayout.WEST);
+        panel.add(uploadButton, gbc);
 
-        return footerPanel;
+        gbc.gridy++;
+        gbc.gridx = 1;
+        panel.add(imageLabel, gbc);
     }
 
-    // Criar o ícone de casa
-    private static ImageIcon createFooterIcon() {
-        // Tentando carregar o ícone de casa usando getClass().getClassLoader()
-        URL homeIconUrl = Pets.class.getClassLoader().getResource("home.png");
+    private void clearForm() {
+        tutorField.setText("");
+        especieField.setText("");
+        racaField.setText("");
+        birthDateField.setText("");
+        petNameField.setText("");
+        clearImage();
+    }
 
-        // Verificar se o arquivo foi carregado corretamente
-        if (homeIconUrl != null) {
-            ImageIcon homeIcon = new ImageIcon(homeIconUrl);
-            Image resizedImage = homeIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-            return new ImageIcon(resizedImage);
-        } else {
-            System.out.println("Imagem home não encontrada.");
-            return new ImageIcon(); // Retorna uma imagem em branco se não encontrado
+    private void clearImage() {
+        imageLabel.setIcon(null);
+        currentPetImagePath = "";
+    }
+
+    class LabelRenderer extends JLabel implements TableCellRenderer {
+        public LabelRenderer() {
+            setHorizontalAlignment(SwingConstants.CENTER);
+            setForeground(Color.RED);
+            setFont(new Font("Arial", Font.BOLD, 12));
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            setText("X");
+            return this;
         }
     }
 
-    // Método para iniciar a página de Pets
-    public static void start() {
-        JFrame frame = new JFrame("Pets Page");
-        Pets pets = new Pets(); // Cria uma instância da página de Pets
+    class LabelEditor extends DefaultCellEditor {
+        public LabelEditor(JCheckBox checkBox) {
+            super(checkBox);
+            checkBox.setForeground(Color.RED);
+        }
 
-        JPanel petsPanel = new JPanel(new BorderLayout());
-        petsPanel.add(new Header(true), BorderLayout.NORTH); // Adiciona o painel superior
-        petsPanel.add(pets.mainPanel, BorderLayout.CENTER); // Adiciona o painel principal da página de pets
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            return new JLabel("X");
+        }
 
-        frame.setContentPane(petsPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 
-    // Método main para iniciar a aplicação
-    public static void main(String[] args) {
-        // Chama o método start() para exibir a página de pets
-        start();
+
+    public static void start() {
+        SwingUtilities.invokeLater(() -> {
+            Pets frame = new Pets();
+            frame.setVisible(true);
+            frame.setLocationRelativeTo(null);
+        });
     }
 }

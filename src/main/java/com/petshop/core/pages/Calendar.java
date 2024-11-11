@@ -188,7 +188,7 @@ public class Calendar extends JFrame {
                 InsertDB.insertEvento(dateString, eventDescription, responsible);
 
 //                if (day > 0 && day <= calendar.getActualMaximum(java.util.Calendar.DAY_OF_MONTH) && !eventDescription.isEmpty()) {
-                    events.put(day, eventDescription);
+//                    events.put(day, eventDescription);
 //                    updateCalendar(); // Reload the calendar with new events
 //                    JOptionPane.showMessageDialog(this, "Evento criado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 //                } else {

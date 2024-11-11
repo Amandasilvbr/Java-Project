@@ -2,10 +2,17 @@ package com.petshop.core.pages;
 
 import com.petshop.core.utils.*;
 import com.petshop.core.components.*;
+import com.petshop.db.DeleteDB;
+import com.petshop.db.InsertDB;
+import com.petshop.db.QueryDB;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class Tutor extends JFrame {
@@ -13,17 +20,15 @@ public class Tutor extends JFrame {
     private static final int PANEL_WIDTH = 800;
     private static final int PANEL_HEIGHT = 700;
 
-    private JTextField nameField, addressField, phoneField, petNameField, cpfField, birthDateField, emailField, searchField;
+    private JTextField nameField, addressField, phoneField, cpfField, birthDateField, emailField, searchField;
     private JComboBox<String> petTypeCombo;
     private JButton saveButton, searchButton;
     private JTable tutorListTable;
     private DefaultTableModel tableModel;
-    private ArrayList<String[]> tutors;
 
     // Constructor initializes the UI components
     public Tutor() {
-        tutors = new ArrayList<>();
-        tableModel = new DefaultTableModel(new Object[]{"Nome", "Ação"}, 0); // Table header
+        tableModel = new DefaultTableModel(new Object[]{"Nome", "Cpf", "Ação"}, 0); // Table header
 
         // Set up the JFrame properties
         setTitle("Cadastro de Tutor de Pet");
@@ -74,7 +79,6 @@ public class Tutor extends JFrame {
         emailField = createTextField();
         cpfField = createTextField();
         birthDateField = createTextField();
-        petNameField = createTextField();
         petTypeCombo = new JComboBox<>(new String[]{"Cão", "Gato", "Pássaro", "Outro"});
 
         // Add form fields to the panel
@@ -84,7 +88,6 @@ public class Tutor extends JFrame {
         addFieldToPanel(panel, gbc, "Email", emailField);
         addFieldToPanel(panel, gbc, "CPF", cpfField);
         addFieldToPanel(panel, gbc, "Data de Nascimento", birthDateField);
-        addFieldToPanel(panel, gbc, "Nome do Pet", petNameField);
         addFieldToPanel(panel, gbc, "Tipo de Pet", petTypeCombo);
 
         // Create and add the save button with an action listener
@@ -116,17 +119,33 @@ public class Tutor extends JFrame {
         tutorListTable = new JTable(tableModel) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 1;
+                return column == 2;
             }
         };
-        tutorListTable.getColumnModel().getColumn(1).setCellRenderer(new LabelRenderer());
-        tutorListTable.getColumnModel().getColumn(1).setCellEditor(new LabelEditor(new JCheckBox()));
-        tutorListTable.getColumnModel().getColumn(1).setPreferredWidth(20);
-        tutorListTable.getColumnModel().getColumn(1).setMaxWidth(20);
-        tutorListTable.getColumnModel().getColumn(1).setMinWidth(20);
-        tutorListTable.getColumnModel().getColumn(1).setResizable(false);
+        tutorListTable.getColumnModel().getColumn(2).setCellRenderer(new LabelRenderer());
+        tutorListTable.getColumnModel().getColumn(2).setCellEditor(new LabelEditor(new JCheckBox()));
+        tutorListTable.getColumnModel().getColumn(2).setPreferredWidth(20);
+        tutorListTable.getColumnModel().getColumn(2).setMaxWidth(20);
+        tutorListTable.getColumnModel().getColumn(2).setMinWidth(20);
+        tutorListTable.getColumnModel().getColumn(2).setResizable(false);
+
+        tutorListTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = tutorListTable.rowAtPoint(e.getPoint());
+                int col = tutorListTable.columnAtPoint(e.getPoint());
+
+                if (col == 2 && row >= 0) {
+                    String cpfValue = tutorListTable.getValueAt(row, 1).toString();
+                    DeleteDB.delete("tutor", cpfValue);
+                    searchTutor();
+                }
+            }
+        });
 
         JScrollPane scrollPane = new JScrollPane(tutorListTable);
+
+
 
         panel.add(searchPanel, BorderLayout.NORTH);
         panel.add(scrollPane, BorderLayout.CENTER);
@@ -153,13 +172,12 @@ public class Tutor extends JFrame {
 
     // Method to save the tutor's data
     private void saveData() {
-        String name = nameField.getText().trim();
+        String name = nameField.getText();
         String address = addressField.getText().trim();
         String phone = phoneField.getText().trim();
         String email = emailField.getText().trim();
         String cpf = cpfField.getText().trim();
         String birthDate = birthDateField.getText().trim();
-        String petName = petNameField.getText().trim();
 
         // Validate form fields
         if (name.isEmpty() || !Validators.isString(name)) {
@@ -192,14 +210,21 @@ public class Tutor extends JFrame {
             return;
         }
 
-        if (petName.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nome do pet é obrigatório.");
-            return;
-        }
+//        if (petName.isEmpty()) {
+//            JOptionPane.showMessageDialog(this, "Nome do pet é obrigatório.");
+//            return;
+//        }
 
         // Add data to the list and update the table
-        String[] data = new String[]{name, "X"};
-        tutors.add(data);
+        String[] data = new String[]{name, cpf, "X"};
+        InsertDB.insertTutor(
+                cpf,
+                name,
+                birthDate,
+                address,
+                phone,
+                email
+        );
         tableModel.addRow(data);
         JOptionPane.showMessageDialog(this, "Dados salvos com sucesso!");
     }
@@ -208,9 +233,10 @@ public class Tutor extends JFrame {
     private void searchTutor() {
         String search = searchField.getText().trim().toLowerCase();
         tableModel.setRowCount(0);  // Clear the table
-        for (String[] tutor : tutors) {
-            if (tutor[0].toLowerCase().contains(search)) {
-                tableModel.addRow(tutor);
+        for (com.petshop.models.Tutor tutor : QueryDB.getAllTutor()) {
+            if (tutor.getName().toLowerCase().contains(search)) {
+                String[] data = new String[]{tutor.getName(), tutor.getCpf(), "X"};
+                tableModel.addRow(data);
             }
         }
     }

@@ -56,7 +56,7 @@ public class QueryDB extends MethodDB {
 
     public static ArrayList<Pet> getAllPet() {
         ArrayList<Pet> petArrayList = new ArrayList<>();
-        String query = "SELECT id, name, born, raca, especie, tutor FROM pet";
+        String query = "SELECT id, name, born, raca, especie, filepath, tutor FROM pet";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             ResultSet rs = stmt.executeQuery();
 
@@ -67,6 +67,7 @@ public class QueryDB extends MethodDB {
                         rs.getString("born"),
                         rs.getString("raca"),
                         rs.getString("especie"),
+                        rs.getString("filepath"),
                         getAllTutor().stream().filter(tutor -> {
                             try {
                                 return tutor.getCpf().equals(rs.getString("tutor"));

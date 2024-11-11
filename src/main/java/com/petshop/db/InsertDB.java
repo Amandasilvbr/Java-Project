@@ -2,6 +2,7 @@ package com.petshop.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class InsertDB extends MethodDB{
@@ -50,9 +51,9 @@ public class InsertDB extends MethodDB{
         }
     }
 
-    public static void insertPet(String name, String born, String raca, String especie, String tutor) {
-        String insertCommand = "INSERT INTO pet (name, born, raca, especie, tutor) "
-                + "VALUES (?, ?, ?, ?, ?)";
+    public static int insertPet(String name, String born, String raca, String especie, String filepath, String tutor) {
+        String insertCommand = "INSERT INTO pet (name, born, raca, especie, filepath, tutor) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(insertCommand)) {
             // Set parameters for the query
@@ -60,14 +61,25 @@ public class InsertDB extends MethodDB{
             stmt.setString(2, born);
             stmt.setString(3, raca);
             stmt.setString(4, especie);
-            stmt.setString(5, tutor);
+            stmt.setString(5, filepath);
+            stmt.setString(6, tutor);
 
             // Execute the insert command
-            stmt.executeUpdate();
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                // Get the generated keys
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int newId = generatedKeys.getInt(1); // Or .getInt(1) if the ID is an int
+                        return newId;
+                    }
+                }
+            }
             System.out.println("Pet " + name + " successfully inserted.");
         } catch (SQLException e) {
             System.out.println("Error inserting " + name + ": " + e.getMessage());
         }
+        return 0;
     }
 
     public static void insertEvento(String date, String descricao, String responsavel) {

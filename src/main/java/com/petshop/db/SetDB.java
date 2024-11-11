@@ -28,6 +28,7 @@ public class SetDB extends MethodDB{
                 + "born DATE NOT NULL, "
                 + "raca VARCHAR(150) NOT NULL, "
                 + "especie VARCHAR(150) NOT NULL, "
+                + "filepath VARCHAR(200) NOT NULL, "
                 + "tutor VARCHAR(11) NOT NULL, "
                 + "FOREIGN KEY (tutor) REFERENCES tutor (cpf));";
 

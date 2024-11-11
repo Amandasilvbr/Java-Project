@@ -13,14 +13,14 @@ public class Main {
     public static void main(String[] in) throws SQLException {
         new SetDB();
         Login.start();
-//        InsertDB.insertTutor(
-//                "49598299821",
-//                "Gabriel Siqueira",
-//                "2004-05-18",
-//                "Rua Marijó",
-//                "+55 11 910518642",
-//                "rsiqueira@barbie.com"
-//        );
+        InsertDB.insertTutor(
+                "49598299821",
+                "Gabriel Siqueira",
+                "2004-05-18",
+                "Rua Marijó",
+                "+55 11 910518642",
+                "rsiqueira@barbie.com"
+        );
         InsertDB.insertVeterinario(
                 "49598299822",
                 "Carlos Manuel",

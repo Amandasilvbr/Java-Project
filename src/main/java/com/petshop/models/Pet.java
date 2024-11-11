@@ -6,6 +6,7 @@ public class Pet {
     private String born;
     private String raca;
     private String especie;
+    private String filepath;
     private Tutor tutor;
     public Pet(
             int id,
@@ -13,6 +14,7 @@ public class Pet {
             String born,
             String raca,
             String especie,
+            String filepath,
             Tutor tutor
     ) {
         this.id = id;
@@ -20,6 +22,7 @@ public class Pet {
         this.born = born;
         this.raca = raca;
         this.especie = especie;
+        this.filepath = filepath;
         this.tutor = tutor;
     }
     public int getId() {
@@ -51,6 +54,12 @@ public class Pet {
     }
     public void setEspecie(String especie) {
         this.especie = especie;
+    }
+    public String getFilepath() {
+        return filepath;
+    }
+    public void setFilepath(String filepath) {
+        this.filepath = filepath;
     }
     public Tutor getTutor() {
         return tutor;
