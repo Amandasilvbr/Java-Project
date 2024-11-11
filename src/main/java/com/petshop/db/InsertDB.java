@@ -82,15 +82,16 @@ public class InsertDB extends MethodDB{
         return 0;
     }
 
-    public static void insertEvento(String date, String descricao, String responsavel) {
-        String insertCommand = "INSERT INTO evento (date, descricao, responsavel) "
-                + "VALUES (?, ?, ?)";
+    public static void insertEvento(String date, String datahora, String descricao, String responsavel) {
+        String insertCommand = "INSERT INTO evento (date, datahora, descricao, responsavel) "
+                + "VALUES (?, ?, ?, ?)";
 
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(insertCommand)) {
             // Set parameters for the query
             stmt.setString(1, date);
-            stmt.setString(2, descricao);
-            stmt.setString(3, responsavel);
+            stmt.setString(2, datahora);
+            stmt.setString(3, descricao);
+            stmt.setString(4, responsavel);
 
             // Execute the insert command
             stmt.executeUpdate();
@@ -100,17 +101,18 @@ public class InsertDB extends MethodDB{
         }
     }
 
-    public static void insertConsulta(String tipo, String descricao, String date, String veterinario, int pet) {
-        String insertCommand = "INSERT INTO consulta (tipo, descricao, date, veterinario, pet) "
-                + "VALUES (?, ?, ?, ?, ?)";
+    public static void insertConsulta(String tipo, String descricao, String date, String datahora, String veterinario, int pet) {
+        String insertCommand = "INSERT INTO consulta (tipo, descricao, date, datahora, veterinario, pet) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(insertCommand)) {
             // Set parameters for the query
             stmt.setString(1, tipo);
             stmt.setString(2, descricao);
             stmt.setString(3, date);
-            stmt.setString(4, veterinario);
-            stmt.setInt(5, pet);
+            stmt.setString(4, datahora);
+            stmt.setString(5, veterinario);
+            stmt.setInt(6, pet);
 
             // Execute the insert command
             stmt.executeUpdate();
@@ -120,17 +122,18 @@ public class InsertDB extends MethodDB{
         }
     }
 
-    public static void insertCirurgia(String tipo, String descricao, String date, String veterinario, int pet) {
-        String insertCommand = "INSERT INTO cirurgia (tipo, descricao, date, veterinario, pet) "
-                + "VALUES (?, ?, ?, ?, ?)";
+    public static void insertCirurgia(String tipo, String descricao, String date, String datahora, String veterinario, int pet) {
+        String insertCommand = "INSERT INTO cirurgia (tipo, descricao, date, datahora, veterinario, pet) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(insertCommand)) {
             // Set parameters for the query
             stmt.setString(1, tipo);
             stmt.setString(2, descricao);
             stmt.setString(3, date);
-            stmt.setString(4, veterinario);
-            stmt.setInt(5, pet);
+            stmt.setString(4, datahora);
+            stmt.setString(5, veterinario);
+            stmt.setInt(6, pet);
 
             // Execute the insert command
             stmt.executeUpdate();

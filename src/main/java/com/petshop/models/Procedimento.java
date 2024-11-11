@@ -5,6 +5,7 @@ public abstract class Procedimento {
     private String tipo;
     private String descricao;
     private String date;
+    private String datahora;
     private Pet pet;
     private Vet veterinario;
     public Procedimento(
@@ -12,6 +13,7 @@ public abstract class Procedimento {
             String tipo,
             String descricao,
             String date,
+            String datahora,
             Pet pet,
             Vet vet
     ) {
@@ -19,6 +21,7 @@ public abstract class Procedimento {
         this.tipo = tipo;
         this.descricao = descricao;
         this.date = date;
+        this.datahora = datahora;
         this.pet = pet;
         this.veterinario = vet;
     }
@@ -45,6 +48,12 @@ public abstract class Procedimento {
     }
     public void setDate(String date) {
         this.date = date;
+    }
+    public String getDatahora() {
+        return datahora;
+    }
+    public void setDatahora(String datahora) {
+        this.datahora = datahora;
     }
     public Pet getPet() {
         return pet;

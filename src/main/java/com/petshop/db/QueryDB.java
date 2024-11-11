@@ -86,7 +86,7 @@ public class QueryDB extends MethodDB {
 
     public static ArrayList<Evento> getAllEvento() {
         ArrayList<Evento> eventArrayList = new ArrayList<>();
-        String query = "SELECT id, date, descricao, responsavel FROM evento";
+        String query = "SELECT id, date, datahora, descricao, responsavel FROM evento ORDER BY date ASC, datahora ASC";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             ResultSet rs = stmt.executeQuery();
 
@@ -94,6 +94,7 @@ public class QueryDB extends MethodDB {
                 Evento event = new Evento(
                         rs.getInt("id"),
                         rs.getString("date"),
+                        rs.getString("datahora"),
                         rs.getString("descricao"),
                         getAllVet().stream().filter(vet -> {
                             try {
@@ -113,7 +114,7 @@ public class QueryDB extends MethodDB {
 
     public static ArrayList<Consulta> getAllConsulta() {
         ArrayList<Consulta> consultaArrayList = new ArrayList<>();
-        String query = "SELECT id, tipo, descricao, date, veterinario, pet FROM consulta";
+        String query = "SELECT id, tipo, descricao, date, datahora, veterinario, pet FROM consulta ORDER BY date ASC, datahora ASC";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             ResultSet rs = stmt.executeQuery();
 
@@ -123,6 +124,7 @@ public class QueryDB extends MethodDB {
                         rs.getString("tipo"),
                         rs.getString("descricao"),
                         rs.getString("date"),
+                        rs.getString("datahora"),
                         getAllPet().stream().filter(pet -> {
                             try {
                                 return (pet.getId() == rs.getInt("pet"));
@@ -148,7 +150,7 @@ public class QueryDB extends MethodDB {
 
     public static ArrayList<Cirurgia> getAllCirurgia() {
         ArrayList<Cirurgia> cirurgiaArrayList = new ArrayList<>();
-        String query = "SELECT id, tipo, descricao, date, veterinario, pet FROM cirurgia";
+        String query = "SELECT id, tipo, descricao, date, datahora, veterinario, pet FROM cirurgia ORDER BY date ASC, datahora ASC";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             ResultSet rs = stmt.executeQuery();
 
@@ -158,6 +160,7 @@ public class QueryDB extends MethodDB {
                         rs.getString("tipo"),
                         rs.getString("descricao"),
                         rs.getString("date"),
+                        rs.getString("datahora"),
                         getAllPet().stream().filter(pet -> {
                             try {
                                 return (pet.getId() == rs.getInt("pet"));

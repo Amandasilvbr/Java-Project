@@ -35,6 +35,7 @@ public class SetDB extends MethodDB{
         String execCreateEvento = "CREATE TABLE IF NOT EXISTS evento ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "date DATE NOT NULL, "
+                + "datahora VARCHAR(5) NOT NULL, "
                 + "descricao TEXT NOT NULL, "
                 + "responsavel VARCHAR(11) NOT NULL, "
                 + "FOREIGN KEY (responsavel) REFERENCES veterinario (cpf));";
@@ -44,6 +45,7 @@ public class SetDB extends MethodDB{
                 + "tipo VARCHAR(80) NOT NULL, "
                 + "descricao TEXT NOT NULL, "
                 + "date DATE NOT NULL, "
+                + "datahora VARCHAR(5) NOT NULL, "
                 + "veterinario VARCHAR(11) NOT NULL, "
                 + "pet INTEGER NOT NULL, "
                 + "FOREIGN KEY (veterinario) REFERENCES veterinario (cpf), "
@@ -54,6 +56,7 @@ public class SetDB extends MethodDB{
                 + "tipo VARCHAR(80) NOT NULL, "
                 + "descricao TEXT NOT NULL, "
                 + "date DATE NOT NULL, "
+                + "datahora VARCHAR(5) NOT NULL, "
                 + "veterinario VARCHAR(11) NOT NULL, "
                 + "pet INTEGER NOT NULL, "
                 + "FOREIGN KEY (veterinario) REFERENCES veterinario (cpf), "

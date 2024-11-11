@@ -270,14 +270,16 @@ public class Home {
             int dayEvento = LocalDate.parse(evento.getDate()).getDayOfMonth();
             int dayToday = LocalDate.now().getDayOfMonth();
             if ( dayEvento == dayToday) {
-                JPanel card = createCards(evento.getDescricao(), evento.getResponsavel().getName(), 20, 10, 5, 10, null);
+                JPanel card = createCards(evento.getDescricao(), evento.getDatahora(), 20, 10, 5, 10, null);
                 card.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         Object[] options = {"Fechar"};
                         JOptionPane.showOptionDialog(
                                 null,
-                                "Evento: " + evento.getDescricao() + "\nResponsável: " + evento.getResponsavel().getName(),
+                                "Evento: " + evento.getDescricao()
+                                        + "\nResponsável: " + evento.getResponsavel().getName()
+                                        + "\nData/Hora: " + evento.getDate() + "-" + evento.getDatahora(),
                                 "Detalhes do Evento",
                                 JOptionPane.DEFAULT_OPTION,
                                 JOptionPane.INFORMATION_MESSAGE,

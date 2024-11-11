@@ -30,12 +30,6 @@ public class Calendar extends JFrame {
 
         calendar = java.util.Calendar.getInstance();
 
-        // Initialize some example events
-        events.put(5, "Aniversário do Cliente A");
-        events.put(12, "Consulta Pet B");
-        events.put(18, "Promoção de banho e tosa");
-        events.put(23, "Palestra sobre pets");
-
         // Main panel that stacks components vertically
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -140,12 +134,15 @@ public class Calendar extends JFrame {
     // Create new event
     private void createNewEvent() {
         JTextField dayField = new JTextField(2);
+        JTextField timeField = new JTextField(5);
         JTextField eventField = new JTextField(20);
         JTextField responsibleField = new JTextField(11);
 
-        JPanel panel = new JPanel(new GridLayout(3, 3));
+        JPanel panel = new JPanel(new GridLayout(4, 4));
         panel.add(new JLabel("Dia:"));
         panel.add(dayField);
+        panel.add(new JLabel("Horário do Evento:"));
+        panel.add(timeField);
         panel.add(new JLabel("Descrição do Evento:"));
         panel.add(eventField);
         panel.add(new JLabel("CPF do responsável"));
@@ -156,7 +153,8 @@ public class Calendar extends JFrame {
         if (result == JOptionPane.OK_OPTION) {
             try {
                 int day = Integer.parseInt(dayField.getText());
-                String eventDescription = eventField.getText().trim();
+                String eventTime = timeField.getText().trim();
+                String eventDescription = eventField.getText();
                 String responsible = responsibleField.getText().trim();
 
                 if (!QueryDB.getAllVet().stream().anyMatch(vet -> vet.getCpf().equals(responsible))) {
@@ -185,7 +183,7 @@ public class Calendar extends JFrame {
 
                 String dateString = yearString + "-" + monthString + "-" + dayString;
 
-                InsertDB.insertEvento(dateString, eventDescription, responsible);
+                InsertDB.insertEvento(dateString, eventTime, eventDescription, responsible);
 
 //                if (day > 0 && day <= calendar.getActualMaximum(java.util.Calendar.DAY_OF_MONTH) && !eventDescription.isEmpty()) {
 //                    events.put(day, eventDescription);
@@ -325,7 +323,7 @@ public class Calendar extends JFrame {
                 // Creates custom buttons for the dialog
                 Object[] options = {"Fechar", "Excluir Evento"};
                 int result = JOptionPane.showOptionDialog(Calendar.this,
-                        "Evento: " + evento.getDescricao() + "\nResponsável: " + evento.getResponsavel().getName(),
+                        "Evento: " + evento.getDescricao() + "\nResponsável: " + evento.getResponsavel().getName() + "\nData/Hora: " + evento.getDate() + "-" + evento.getDatahora(),
                         "Detalhes do Evento",
                         JOptionPane.DEFAULT_OPTION,
                         JOptionPane.INFORMATION_MESSAGE,
