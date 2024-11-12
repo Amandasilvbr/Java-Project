@@ -1,5 +1,9 @@
 package com.petshop.db;
 
+import com.petshop.models.Pet;
+import com.petshop.models.Tutor;
+import com.petshop.models.Vet;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -64,20 +68,28 @@ public class InsertDB extends MethodDB{
             stmt.setString(5, filepath);
             stmt.setString(6, tutor);
 
-            // Execute the insert command
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0) {
-                // Get the generated keys
-                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        int newId = generatedKeys.getInt(1); // Or .getInt(1) if the ID is an int
-                        return newId;
+            Tutor tutorInsert = QueryDB.getAllTutor().stream().filter(tutorQuery -> {
+                return tutorQuery.getCpf().equals(tutor);
+            }).toList().getFirst();
+
+            if (tutorInsert != null) {
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows > 0) {
+                    try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            int newId = generatedKeys.getInt(1); // Or .getInt(1) if the ID is an int
+                            return newId;
+                        }
                     }
                 }
+                System.out.println("Pet " + name + " successfully inserted.");
+            } else {
+                throw new Exception("Tutor" + tutor + " not found");
             }
-            System.out.println("Pet " + name + " successfully inserted.");
         } catch (SQLException e) {
             System.out.println("Error inserting " + name + ": " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return 0;
     }
@@ -93,11 +105,21 @@ public class InsertDB extends MethodDB{
             stmt.setString(3, descricao);
             stmt.setString(4, responsavel);
 
-            // Execute the insert command
-            stmt.executeUpdate();
+            Vet vetInsert = QueryDB.getAllVet().stream().filter(vetQuery -> {
+                return vetQuery.getCpf().equals(responsavel);
+            }).toList().getFirst();
+
+            if (vetInsert != null) {
+                stmt.executeUpdate();
+            } else {
+                throw new Exception("Veterinario" + responsavel + " not found");
+            }
+
             System.out.println("Event " + descricao + " successfully inserted.");
         } catch (SQLException e) {
             System.out.println("Error inserting " + descricao + ": " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -114,11 +136,27 @@ public class InsertDB extends MethodDB{
             stmt.setString(5, veterinario);
             stmt.setInt(6, pet);
 
-            // Execute the insert command
-            stmt.executeUpdate();
-            System.out.println("Consulta " + tipo + " successfully inserted.");
+            Vet vetInsert = QueryDB.getAllVet().stream().filter(vetQuery -> {
+                return vetQuery.getCpf().equals(veterinario);
+            }).toList().getFirst();
+
+            Pet petInsert = QueryDB.getAllPet().stream().filter(petQuery -> {
+                return petQuery.getId() == pet;
+            }).toList().getFirst();
+
+            if (vetInsert != null && petInsert != null) {
+                stmt.executeUpdate();
+                System.out.println("Cirurgia " + tipo + " successfully inserted.");
+            } else if (vetInsert != null) {
+                throw new Exception("Veterinario" + veterinario + " not found");
+            } else if (petInsert != null) {
+                throw new Exception("Pet" + pet + " not found");
+            }
+
         } catch (SQLException e) {
             System.out.println("Error inserting " + tipo + ": " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -135,11 +173,27 @@ public class InsertDB extends MethodDB{
             stmt.setString(5, veterinario);
             stmt.setInt(6, pet);
 
-            // Execute the insert command
-            stmt.executeUpdate();
-            System.out.println("Cirurgia " + tipo + " successfully inserted.");
+            Vet vetInsert = QueryDB.getAllVet().stream().filter(vetQuery -> {
+                return vetQuery.getCpf().equals(veterinario);
+            }).toList().getFirst();
+
+            Pet petInsert = QueryDB.getAllPet().stream().filter(petQuery -> {
+                return petQuery.getId() == pet;
+            }).toList().getFirst();
+
+            if (vetInsert != null && petInsert != null) {
+                stmt.executeUpdate();
+                System.out.println("Cirurgia " + tipo + " successfully inserted.");
+            } else if (vetInsert != null) {
+                throw new Exception("Veterinario" + veterinario + " not found");
+            } else if (petInsert != null) {
+                throw new Exception("Pet" + pet + " not found");
+            }
+
         } catch (SQLException e) {
             System.out.println("Error inserting  " + tipo + ": " + e.getMessage());;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

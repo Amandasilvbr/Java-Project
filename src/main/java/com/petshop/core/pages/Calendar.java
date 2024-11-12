@@ -183,7 +183,13 @@ public class Calendar extends JFrame {
 
                 String dateString = yearString + "-" + monthString + "-" + dayString;
 
-                InsertDB.insertEvento(dateString, eventTime, eventDescription, responsible);
+                try {
+                    InsertDB.insertEvento(dateString, eventTime, eventDescription, responsible);
+                    updateCalendar();
+                    JOptionPane.showMessageDialog(this, "Evento criado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this, e.getMessage());
+                }
 
 //                if (day > 0 && day <= calendar.getActualMaximum(java.util.Calendar.DAY_OF_MONTH) && !eventDescription.isEmpty()) {
 //                    events.put(day, eventDescription);

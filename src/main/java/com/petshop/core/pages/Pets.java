@@ -13,6 +13,11 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.io.File;
 
@@ -22,16 +27,13 @@ public class Pets extends JFrame {
     private static final int PANEL_HEIGHT = 700;
 
     private JTextField tutorField, petNameField, racaField, birthDateField, searchField, especieField;
-    private JComboBox<String> petTypeCombo;
     private JButton saveButton, searchButton;
     private JTable petsListTable;
     private DefaultTableModel tableModel;
-    private ArrayList<String[]> pets;
     private JLabel imageLabel;
     private String currentPetImagePath = "";
 
     public Pets() {
-        pets = new ArrayList<>();
         tableModel = new DefaultTableModel(new Object[]{"ID", "Nome", "Tutor", "..."}, 0);
 
         setTitle("Cadastro de pets");
@@ -57,6 +59,7 @@ public class Pets extends JFrame {
         add(headerPanel, BorderLayout.NORTH);
         add(splitPane, BorderLayout.CENTER);
         add(footerPanel, BorderLayout.PAGE_END);
+        searchPets();
     }
 
     private JPanel createFormPanel() {
@@ -193,20 +196,24 @@ public class Pets extends JFrame {
             return;
         }
 
+        try {
+            int petId = InsertDB.insertPet(
+                    petName,
+                    birthDate,
+                    raca,
+                    especie,
+                    currentPetImagePath,
+                    tutor
+            );
+            String[] data = new String[]{String.valueOf(petId), petName, tutor, "X"};
+            tableModel.addRow(data);
+            JOptionPane.showMessageDialog(this, "Dados salvos com sucesso!");
+            searchPets();
+            clearForm();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Tutor não encontrado.");
+        }
 
-        int petId = InsertDB.insertPet(
-                petName,
-                birthDate,
-                raca,
-                especie,
-                currentPetImagePath,
-                tutor
-        );
-        String[] data = new String[]{String.valueOf(petId), petName, tutor, "X"};
-        tableModel.addRow(data);
-        JOptionPane.showMessageDialog(this, "Dados salvos com sucesso!");
-
-        clearForm();
     }
 
     private void searchPets() {
@@ -321,10 +328,24 @@ public class Pets extends JFrame {
             JFileChooser fileChooser = new JFileChooser();
             int result = fileChooser.showOpenDialog(this);
             if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
                 ImageIcon imageIcon = new ImageIcon(fileChooser.getSelectedFile().getPath());
                 Image scaledImage = imageIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
                 imageLabel.setIcon(new ImageIcon(scaledImage));
-                currentPetImagePath = fileChooser.getSelectedFile().getPath();
+                currentPetImagePath = selectedFile.getPath();
+
+                Path sourcePath = selectedFile.toPath();
+                Path targetPath = Paths.get("pets", selectedFile.getName());
+
+                try {
+                    Files.createDirectories(targetPath.getParent());
+                    Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                    currentPetImagePath = targetPath.toString();
+                    System.out.println("Image copied to " + targetPath);
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                    JOptionPane.showMessageDialog(panel, "Failed to copy image to target directory.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 

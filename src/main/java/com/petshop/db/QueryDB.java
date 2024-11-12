@@ -4,6 +4,7 @@ import com.petshop.models.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 public class QueryDB extends MethodDB {
     public static ArrayList<Tutor> getAllTutor() {
@@ -74,7 +75,7 @@ public class QueryDB extends MethodDB {
                             } catch (SQLException e) {
                                 throw new RuntimeException(e);
                             }
-                        }).toList().get(0)
+                        }).toList().getFirst()
                 );
                 petArrayList.add(pet);
             }
@@ -102,7 +103,7 @@ public class QueryDB extends MethodDB {
                             } catch (SQLException e) {
                                 throw new RuntimeException(e);
                             }
-                        }).toList().get(0)
+                        }).toList().getFirst()
                 );
                 eventArrayList.add(event);
             }
@@ -131,14 +132,14 @@ public class QueryDB extends MethodDB {
                             } catch (SQLException e) {
                                 throw new RuntimeException(e);
                             }
-                        }).toList().get(0),
+                        }).toList().getFirst(),
                         getAllVet().stream().filter(vet -> {
                             try {
                                 return vet.getCpf().equals(rs.getString("veterinario"));
                             } catch (SQLException e) {
                                 throw new RuntimeException(e);
                             }
-                        }).toList().get(0)
+                        }).toList().getFirst()
                 );
                 consultaArrayList.add(consulta);
             }
@@ -167,14 +168,14 @@ public class QueryDB extends MethodDB {
                             } catch (SQLException e) {
                                 throw new RuntimeException(e);
                             }
-                        }).toList().get(0),
+                        }).toList().getFirst(),
                         getAllVet().stream().filter(vet -> {
                             try {
                                 return vet.getCpf().equals(rs.getString("veterinario"));
                             } catch (SQLException e) {
                                 throw new RuntimeException(e);
                             }
-                        }).toList().get(0)
+                        }).toList().getFirst()
                 );
                 cirurgiaArrayList.add(cirurgia);
             }
