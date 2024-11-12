@@ -276,9 +276,7 @@ public class Tutor extends JFrame {
     public static void start() {
         SwingUtilities.invokeLater(() -> {
             Tutor tutorWindow = new Tutor();
-            tutorWindow.setVisible(true);
-            tutorWindow.setLocationRelativeTo(null); // This centers the window
-            tutorWindow.setResizable(false);
+            DefaultPage.getDefaultConfig(tutorWindow);
         });
     }
 

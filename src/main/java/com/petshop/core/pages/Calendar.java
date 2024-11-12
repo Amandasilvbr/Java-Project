@@ -26,7 +26,6 @@ public class Calendar extends JFrame {
     public Calendar() {
         setTitle("Calendário");
         setSize(800, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         calendar = java.util.Calendar.getInstance();
 
@@ -347,14 +346,7 @@ public class Calendar extends JFrame {
     // Starts the Calendar and displays it
     public static void start() {
         Calendar calendarPanel = new Calendar();
-        // Make the calendar page visible
-        calendarPanel.setVisible(true);
-        calendarPanel.setLocationRelativeTo(null);
-        calendarPanel.setResizable(false);
+        DefaultPage.getDefaultConfig(calendarPanel);
     }
 
-    // Main method to launch the calendar page
-    public static void main(String[] args) {
-        start();
-    }
 }

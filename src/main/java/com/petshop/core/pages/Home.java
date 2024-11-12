@@ -1,5 +1,6 @@
 package com.petshop.core.pages;
 
+import com.petshop.core.utils.DefaultPage;
 import com.petshop.db.DeleteDB;
 import com.petshop.db.QueryDB;
 import com.petshop.models.Evento;
@@ -316,10 +317,6 @@ public class Home {
     public static void start() {
         JFrame frame = new JFrame("Home Page");
         frame.setContentPane(new Home().mainPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        frame.setResizable(false);
+        DefaultPage.getDefaultConfig(frame);
     }
 }

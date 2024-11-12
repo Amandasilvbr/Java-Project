@@ -401,8 +401,7 @@ public class Pets extends JFrame {
     public static void start() {
         SwingUtilities.invokeLater(() -> {
             Pets frame = new Pets();
-            frame.setVisible(true);
-            frame.setLocationRelativeTo(null);
+            DefaultPage.getDefaultConfig(frame);
         });
     }
 }

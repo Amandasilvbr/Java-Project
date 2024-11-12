@@ -215,10 +215,6 @@ public class Login {
     public static void start() {
         JFrame frame = new JFrame("Login Page");
         frame.setContentPane(new Login().mainPanel);
-        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        DefaultPage.getDefaultConfig(frame);
     }
 }
