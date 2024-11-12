@@ -60,6 +60,7 @@ public class Tutor extends JFrame {
         add(headerPanel, BorderLayout.NORTH);
         add(splitPane, BorderLayout.CENTER);
         add(footerPanel, BorderLayout.PAGE_END);
+        searchTutor();
     }
 
     // Method to create the form panel
@@ -209,11 +210,6 @@ public class Tutor extends JFrame {
             JOptionPane.showMessageDialog(this, "Data de nascimento é obrigatória.");
             return;
         }
-
-//        if (petName.isEmpty()) {
-//            JOptionPane.showMessageDialog(this, "Nome do pet é obrigatório.");
-//            return;
-//        }
 
         // Add data to the list and update the table
         String[] data = new String[]{name, cpf, "X"};

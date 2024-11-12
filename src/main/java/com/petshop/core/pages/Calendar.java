@@ -20,7 +20,6 @@ public class Calendar extends JFrame {
     private final java.util.Calendar calendar;
     private final JPanel daysPanel;
     private JLabel title;
-    private static final Map<Integer, String> events = new HashMap<>();
 
     // Constructor for the Calendar Page
     public Calendar() {
@@ -189,14 +188,6 @@ public class Calendar extends JFrame {
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this, e.getMessage());
                 }
-
-//                if (day > 0 && day <= calendar.getActualMaximum(java.util.Calendar.DAY_OF_MONTH) && !eventDescription.isEmpty()) {
-//                    events.put(day, eventDescription);
-//                    updateCalendar(); // Reload the calendar with new events
-//                    JOptionPane.showMessageDialog(this, "Evento criado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-//                } else {
-//                    JOptionPane.showMessageDialog(this, "Entrada inválida. Verifique o dia e a descrição.", "Erro", JOptionPane.ERROR_MESSAGE);
-//                }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Dia inválido. Por favor, insira um número.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
