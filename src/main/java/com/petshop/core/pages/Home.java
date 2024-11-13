@@ -1,4 +1,9 @@
-package Petshop;
+package com.petshop.core.pages;
+
+import com.petshop.core.utils.DefaultPage;
+import com.petshop.db.DeleteDB;
+import com.petshop.db.QueryDB;
+import com.petshop.models.Evento;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -6,9 +11,10 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class HomePage {
+public class Home {
     private static final int PANEL_WIDTH = 800;
     private static final int PANEL_HEIGHT = 700;
     private static final Color TOP_PANEL_COLOR = new Color(30, 10, 60);
@@ -20,7 +26,7 @@ public class HomePage {
 
     private final JPanel mainPanel;
 
-    public HomePage() {
+    public Home() {
         mainPanel = createMainPanel();
     }
 
@@ -85,7 +91,8 @@ public class HomePage {
                     switch (i) {
                         case 0:
                             //Add re-direct to Calendario page
-                            JOptionPane.showMessageDialog(null, "Evento Calendário");
+                            SwingUtilities.getWindowAncestor(card).dispose();
+                            Calendar.start();
                             break;
                         case 1:
                             //Add re-direct to Cirurgia page
@@ -101,11 +108,13 @@ public class HomePage {
                             break;
                         case 4:
                             //Add re-direct to Tutor page
-                            JOptionPane.showMessageDialog(null, "Evento Tutor");
+                            SwingUtilities.getWindowAncestor(card).dispose();
+                            Tutor.start();
                             break;
                         case 5:
                             //Add re-direct to Pets page
-                            JOptionPane.showMessageDialog(null, "Evento Pets");
+                            SwingUtilities.getWindowAncestor(card).dispose();
+                            Pets.start();
                             break;
                     }
                 }
@@ -143,7 +152,7 @@ public class HomePage {
     }
 
     private void addHomeIconToTopPanel(JPanel topPanel) {
-        URL homeIconUrl = getClass().getClassLoader().getResource("resources/homeicon.png");
+        URL homeIconUrl = getClass().getClassLoader().getResource("homeIcon.png");
         if (homeIconUrl != null) {
             ImageIcon homeIcon = new ImageIcon(homeIconUrl);
             Image resizedImage = homeIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
@@ -201,7 +210,7 @@ public class HomePage {
         gbc.anchor = GridBagConstraints.CENTER;
 
         if (imagePath != null) {
-            URL imageUrl = getClass().getClassLoader().getResource("resources/" + imagePath);
+            URL imageUrl = getClass().getClassLoader().getResource(imagePath);
             if (imageUrl != null) {
                 ImageIcon imageIcon = new ImageIcon(imageUrl);
                 Image image = imageIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
@@ -258,22 +267,32 @@ public class HomePage {
         agendaPanel.add(agendaTitle);
         agendaPanel.add(Box.createVerticalStrut(20));
 
-        String[][] events = {
-                {"Consulta com o Dr. Abulebebe", "10:00 AM - 11:00 AM"},
-                {"Evento de vacinação", "2:00 PM - 3:00 PM"},
-                {"Consulta com a Dra. Ana", "4:00 PM - 5:00 PM"},
-                {"Consulta com a Dra. Ana", "4:00 PM - 5:00 PM"},
-                {"Consulta com a Dra. Ana", "4:00 PM - 5:00 PM"},
-                {"Consulta com a Dra. Ana", "4:00 PM - 5:00 PM"},
-                {"Consulta com a Dra. Ana", "4:00 PM - 5:00 PM"},
-                {"Consulta com a Dra. Ana", "4:00 PM - 5:00 PM"},
-                {"Consulta com a Dra. Ana", "4:00 PM - 5:00 PM"},
-                {"Consulta com a Dra. Ana", "4:00 PM - 5:00 PM"},
-        };
-
-        for (String[] event : events) {
-            agendaPanel.add(createCards(event[0], event[1], 20, 10, 5, 10, null));
-            agendaPanel.add(Box.createVerticalStrut(11));
+        for (Evento evento : QueryDB.getAllEvento()) {
+            int dayEvento = LocalDate.parse(evento.getDate()).getDayOfMonth();
+            int dayToday = LocalDate.now().getDayOfMonth();
+            if ( dayEvento == dayToday) {
+                JPanel card = createCards(evento.getDescricao(), evento.getDatahora(), 20, 10, 5, 10, null);
+                card.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        Object[] options = {"Fechar"};
+                        JOptionPane.showOptionDialog(
+                                null,
+                                "Evento: " + evento.getDescricao()
+                                        + "\nResponsável: " + evento.getResponsavel().getName()
+                                        + "\nData/Hora: " + evento.getDate() + "-" + evento.getDatahora(),
+                                "Detalhes do Evento",
+                                JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.INFORMATION_MESSAGE,
+                                null, options, options[0]
+                        );
+                    }
+                });
+                agendaPanel.add(card);
+                agendaPanel.add(Box.createVerticalStrut(11));
+            }
+//            agendaPanel.add(createCards(event[0], event[1], 20, 10, 5, 10, null));
+//            agendaPanel.add(Box.createVerticalStrut(11));
         }
 
         JPanel gradientPanel = new JPanel() {
@@ -297,11 +316,7 @@ public class HomePage {
 
     public static void start() {
         JFrame frame = new JFrame("Home Page");
-        frame.setContentPane(new HomePage().mainPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        frame.setResizable(false);
+        frame.setContentPane(new Home().mainPanel);
+        DefaultPage.getDefaultConfig(frame);
     }
 }

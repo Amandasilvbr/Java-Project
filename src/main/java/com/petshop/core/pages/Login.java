@@ -1,4 +1,6 @@
-package Petshop;
+package com.petshop.core.pages;
+
+import com.petshop.core.utils.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,12 +13,12 @@ import javax.swing.border.AbstractBorder;
 
 import static javax.swing.JFrame.*;
 
-public class LoginPage {
+public class Login {
     private final JPanel mainPanel;
     private final JTextField emailField;
     private final JPasswordField passwordField;
 
-    public LoginPage() {
+    public Login() {
         // Main panel with custom gradient
         mainPanel = new JPanel() {
             @Override
@@ -134,6 +136,8 @@ public class LoginPage {
         loginButton.setForeground(new Color(64, 64, 64));
         loginButton.setFont(new Font("Arial", Font.BOLD, 14));
         loginButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        Hover.addHandCursorOnHover(loginButton);
+
 
         loginButton.addActionListener(new ActionListener() {
             @Override
@@ -143,7 +147,7 @@ public class LoginPage {
 
                 if (email.equals("a") && password.equals("a")) {
                     SwingUtilities.getWindowAncestor(mainPanel).dispose();
-                    new HomePage().start();
+                    new Home().start();
                 } else {
                     JOptionPane.showMessageDialog(null, "Credenciais incorretas");
                 }
@@ -168,7 +172,7 @@ public class LoginPage {
         loginPanel.add(loginButton);
 
         // Cat image login page
-        URL imageUrl = getClass().getClassLoader().getResource("resources/gato.png");
+        URL imageUrl = getClass().getClassLoader().getResource("gato.png");
         if (imageUrl != null) {
             ImageIcon catIcon = new ImageIcon(imageUrl);
             Image img = catIcon.getImage().getScaledInstance(100, -1, Image.SCALE_SMOOTH);
@@ -208,13 +212,9 @@ public class LoginPage {
         }
     }
 
-    public static void main(String[] args) {
+    public static void start() {
         JFrame frame = new JFrame("Login Page");
-        frame.setContentPane(new LoginPage().mainPanel);
-        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        frame.setContentPane(new Login().mainPanel);
+        DefaultPage.getDefaultConfig(frame);
     }
 }
