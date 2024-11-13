@@ -1,7 +1,5 @@
 package com.petshop.core.utils;
 
-import com.petshop.core.pages.Home;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -20,5 +18,6 @@ public class DefaultPage {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 }

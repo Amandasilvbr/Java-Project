@@ -205,8 +205,6 @@ public class Pets extends JFrame {
                     currentPetImagePath,
                     tutor
             );
-            String[] data = new String[]{String.valueOf(petId), petName, tutor, "X"};
-            tableModel.addRow(data);
             JOptionPane.showMessageDialog(this, "Dados salvos com sucesso!");
             searchPets();
             clearForm();
@@ -221,7 +219,7 @@ public class Pets extends JFrame {
         tableModel.setRowCount(0);
         for (Pet pet : QueryDB.getAllPet()) {
             if (pet.getName().toLowerCase().contains(search)) {
-                String[] petData = {String.valueOf(pet.getId()), pet.getName(), pet.getTutor().getCpf(), "X"};
+                String[] petData = {String.valueOf(pet.getId()), pet.getName(), pet.getTutor().getName(), "X"};
                 tableModel.addRow(petData);
             }
         }
