@@ -12,24 +12,22 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.io.File;
 
-public class Pets extends JFrame {
+public class Veterinary extends JFrame {
 
     private static final int PANEL_WIDTH = 800;
     private static final int PANEL_HEIGHT = 700;
 
-    private JTextField nameField, addressField, phoneField, petNameField, cpfField, birthDateField, emailField, searchField;
+    private JTextField addressField, phoneField, vetNameField, cpfField, birthDateField, emailField, searchField, crmvField;
     private JButton saveButton, searchButton;
-    private JTable petsListTable;
+    private JTable vetsListTable;
     private DefaultTableModel tableModel;
-    private ArrayList<String[]> pets;
-    private JLabel imageLabel;
-    private String currentPetImagePath = "";
+    private ArrayList<String[]> veterinarians;
 
-    public Pets() {
-        pets = new ArrayList<>();
+    public Veterinary() {
+        veterinarians = new ArrayList<>();
         tableModel = new DefaultTableModel(new Object[]{"Nome", "..."}, 0);
 
-        setTitle("Cadastro de pets");
+        setTitle("Cadastro de veterinários");
         setSize(PANEL_WIDTH, PANEL_HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -54,6 +52,8 @@ public class Pets extends JFrame {
         add(footerPanel, BorderLayout.PAGE_END);
     }
 
+    private JComboBox<String> specialtyComboBox;
+
     private JPanel createFormPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Formulário de Cadastro"));
@@ -63,24 +63,40 @@ public class Pets extends JFrame {
         gbc.gridx = 0;
         gbc.anchor = GridBagConstraints.WEST;
 
-        nameField = createTextField();
         addressField = createTextField();
         phoneField = createTextField();
         emailField = createTextField();
         cpfField = createTextField();
         birthDateField = createTextField();
-        petNameField = createTextField();
+        vetNameField = createTextField();
+        crmvField = createTextField();
 
-        addFieldToPanel(panel, gbc, "Nome do Pet", petNameField);
-        addFieldToPanel(panel, gbc, "Nome do tutor", nameField);
+        specialtyComboBox = new JComboBox<>(new String[]{
+                "Pequenos Animais",
+                "Grandes Animais",
+                "Anestesiologia",
+                "Dermatologia",
+                "Oftalmologia",
+                "Cardiologia",
+                "Oncologia",
+                "Medicina Comportamental",
+                "Nutrição Animal",
+                "Animais Selvagens e Exóticos",
+                "Patologia Veterinária",
+                "Animais Aquáticos",
+                "Epidemiologia"
+        });
+
+        specialtyComboBox.setPreferredSize(new Dimension(200, 20));
+
+        addFieldToPanel(panel, gbc, "Nome do veterinário", vetNameField);
         addFieldToPanel(panel, gbc, "Endereço", addressField);
         addFieldToPanel(panel, gbc, "Telefone", phoneField);
         addFieldToPanel(panel, gbc, "Email", emailField);
         addFieldToPanel(panel, gbc, "CPF", cpfField);
+        addFieldToPanel(panel, gbc, "CRMV", crmvField);
         addFieldToPanel(panel, gbc, "Data de Nascimento", birthDateField);
-
-        // Adiciona o campo de upload de imagem
-        addImageUploadField(panel, gbc);
+        addFieldToPanel(panel, gbc, "Especialidade", specialtyComboBox);
 
         saveButton = new RoundedButton("Salvar cadastro");
         saveButton.addActionListener(e -> saveData());
@@ -95,34 +111,34 @@ public class Pets extends JFrame {
 
     private JPanel createListPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createTitledBorder("Lista de Pets"));
+        panel.setBorder(BorderFactory.createTitledBorder("Lista de Veterinários"));
 
         searchField = new JTextField();
         searchButton = new RoundedButton("Pesquisar");
-        searchButton.addActionListener(e -> searchPets());
+        searchButton.addActionListener(e -> searchVeterinarians());
         searchButton.setPreferredSize(new Dimension(80, 15));
 
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.add(searchField, BorderLayout.CENTER);
         searchPanel.add(searchButton, BorderLayout.EAST);
 
-        petsListTable = new JTable(tableModel) {
+        vetsListTable = new JTable(tableModel) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 1;
             }
         };
-        petsListTable.getColumnModel().getColumn(1).setCellRenderer(new LabelRenderer());
-        petsListTable.getColumnModel().getColumn(1).setCellEditor(new LabelEditor(new JCheckBox()));
-        petsListTable.getColumnModel().getColumn(1).setPreferredWidth(20);
-        petsListTable.getColumnModel().getColumn(1).setMaxWidth(20);
-        petsListTable.getColumnModel().getColumn(1).setMinWidth(20);
-        petsListTable.getColumnModel().getColumn(1).setResizable(false);
+        vetsListTable.getColumnModel().getColumn(1).setCellRenderer(new LabelRenderer());
+        vetsListTable.getColumnModel().getColumn(1).setCellEditor(new LabelEditor(new JCheckBox()));
+        vetsListTable.getColumnModel().getColumn(1).setPreferredWidth(20);
+        vetsListTable.getColumnModel().getColumn(1).setMaxWidth(20);
+        vetsListTable.getColumnModel().getColumn(1).setMinWidth(20);
+        vetsListTable.getColumnModel().getColumn(1).setResizable(false);
 
-        JScrollPane scrollPane = new JScrollPane(petsListTable);
-        petsListTable.addMouseListener(new java.awt.event.MouseAdapter() {
+        JScrollPane scrollPane = new JScrollPane(vetsListTable);
+        vetsListTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                int row = petsListTable.rowAtPoint(evt.getPoint());
+                int row = vetsListTable.rowAtPoint(evt.getPoint());
                 if (row >= 0) {
                     openPetDetailsDialog(row);
                 }
@@ -143,15 +159,16 @@ public class Pets extends JFrame {
     }
 
     private void saveData() {
-        String name = nameField.getText().trim();
         String address = addressField.getText().trim();
         String phone = phoneField.getText().trim();
         String email = emailField.getText().trim();
         String cpf = cpfField.getText().trim();
         String birthDate = birthDateField.getText().trim();
-        String petName = petNameField.getText().trim();
+        String vetName = vetNameField.getText().trim();
+        String crmv = crmvField.getText().trim();
+        String specialty = (String) specialtyComboBox.getSelectedItem();
 
-        if (name.isEmpty() || !Validators.isString(name)) {
+        if (vetName.isEmpty() || !Validators.isString(vetName)) {
             JOptionPane.showMessageDialog(this, "O nome do tutor é obrigatório e deve conter apenas letras.");
             return;
         }
@@ -181,23 +198,28 @@ public class Pets extends JFrame {
             return;
         }
 
-        if (petName.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nome do pet é obrigatório.");
+        if (crmv.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "CRMV é obrigatório.");
             return;
         }
 
-        String[] data = new String[]{petName, name, cpf, phone, email, address, birthDate, currentPetImagePath};
-        pets.add(data);
+        if (specialty == null || specialty.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Especialidade é obrigatória.");
+            return;
+        }
+
+        String[] data = new String[]{vetName, specialty, cpf, phone, email, address, birthDate};
+        veterinarians.add(data);
         tableModel.addRow(data);
         JOptionPane.showMessageDialog(this, "Dados salvos com sucesso!");
 
         clearForm();
     }
 
-    private void searchPets() {
+    private void searchVeterinarians() {
         String search = searchField.getText().trim().toLowerCase();
         tableModel.setRowCount(0);
-        for (String[] pet : pets) {
+        for (String[] pet : veterinarians) {
             if (pet[0].toLowerCase().contains(search)) {
                 tableModel.addRow(pet);
             }
@@ -205,10 +227,9 @@ public class Pets extends JFrame {
     }
 
     private void openPetDetailsDialog(int row) {
-        String[] petData = pets.get(row);
+        String[] veterinaryData = veterinarians.get(row);
 
-        // Criar o JDialog para os detalhes do pet
-        JDialog petDetailsDialog = new JDialog(this, "Detalhes do Pet", true);
+        JDialog petDetailsDialog = new JDialog(this, "Detalhes do veterinário", true);
         petDetailsDialog.setSize(800, 500);
         petDetailsDialog.setLayout(new BorderLayout());
 
@@ -217,40 +238,38 @@ public class Pets extends JFrame {
         petDetailsDialog.add(headerPanel, BorderLayout.NORTH);
 
         JPanel detailsPanel = new JPanel(new GridBagLayout());
-        detailsPanel.setBorder(BorderFactory.createTitledBorder("Informações do Pet"));
+        detailsPanel.setBorder(BorderFactory.createTitledBorder("Informações do veterinário"));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.gridx = 0;
         gbc.anchor = GridBagConstraints.WEST;
 
-        JLabel petNameLabel = new JLabel(petData[0]);
-        JLabel tutorNameLabel = new JLabel(petData[1]);
-        JLabel cpfLabel = new JLabel(petData[5]);
-        JLabel phoneLabel = new JLabel(petData[3]);
-        JLabel emailLabel = new JLabel(petData[4]);
-        JLabel addressLabel = new JLabel(petData[2]);
-        JLabel birthDateLabel = new JLabel(petData[6]);
+        JLabel vetNameLabel = new JLabel(veterinaryData[0]);
+        JLabel cpfLabel = new JLabel(veterinaryData[5]);
+        JLabel phoneLabel = new JLabel(veterinaryData[3]);
+        JLabel emailLabel = new JLabel(veterinaryData[4]);
+        JLabel addressLabel = new JLabel(veterinaryData[2]);
+        JLabel crmvLabel = new JLabel(veterinaryData[6]);
 
-        addFieldToPanel(detailsPanel, gbc, "Nome do Pet", petNameLabel);
-        addFieldToPanel(detailsPanel, gbc, "Nome do Tutor", tutorNameLabel);
+        addFieldToPanel(detailsPanel, gbc, "Nome do veterinário", vetNameLabel);
         addFieldToPanel(detailsPanel, gbc, "CPF", cpfLabel);
         addFieldToPanel(detailsPanel, gbc, "Telefone", phoneLabel);
         addFieldToPanel(detailsPanel, gbc, "Email", emailLabel);
         addFieldToPanel(detailsPanel, gbc, "Endereço", addressLabel);
-        addFieldToPanel(detailsPanel, gbc, "Data de Nascimento", birthDateLabel);
+        addFieldToPanel(detailsPanel, gbc, "CRMV", crmvLabel);
 
         JPanel imagePanel = new JPanel();
         imagePanel.setLayout(new BorderLayout());
 
-        String imagePath = petData[7];
+        String imagePath = veterinaryData[7];
         JLabel imageLabel = new JLabel();
 
         if (!imagePath.isEmpty()) {
             File imageFile = new File(imagePath);
             if (imageFile.exists() && imageFile.isFile()) {
                 ImageIcon imageIcon = new ImageIcon(imagePath);
-                Image image = imageIcon.getImage(); // Obtém a imagem
+                Image image = imageIcon.getImage();
                 Image scaledImage = image.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
                 imageLabel.setIcon(new ImageIcon(scaledImage));
             } else {
@@ -267,8 +286,6 @@ public class Pets extends JFrame {
         splitPane.setDividerLocation(300);
         splitPane.setDividerSize(0);
         splitPane.setEnabled(false);
-        splitPane.setResizeWeight(0.5);
-
         splitPane.setResizeWeight(0.5);
 
         petDetailsDialog.add(splitPane, BorderLayout.CENTER);
@@ -290,48 +307,14 @@ public class Pets extends JFrame {
         panel.add(field, gbc);
     }
 
-    private void addImageUploadField(JPanel panel, GridBagConstraints gbc) {
-        gbc.gridy++;
-        gbc.gridx = 0;
-        panel.add(new JLabel("Imagem do Pet"), gbc);
-
-        gbc.gridx = 1;
-        JButton uploadButton = new JButton("Upload");
-        imageLabel = new JLabel();
-        imageLabel.setPreferredSize(new Dimension(100, 100));
-
-        uploadButton.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser();
-            int result = fileChooser.showOpenDialog(this);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                ImageIcon imageIcon = new ImageIcon(fileChooser.getSelectedFile().getPath());
-                Image scaledImage = imageIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-                imageLabel.setIcon(new ImageIcon(scaledImage));
-                currentPetImagePath = fileChooser.getSelectedFile().getPath();
-            }
-        });
-
-        panel.add(uploadButton, gbc);
-
-        gbc.gridy++;
-        gbc.gridx = 1;
-        panel.add(imageLabel, gbc);
-    }
-
     private void clearForm() {
-        nameField.setText("");
+        vetNameField.setText("");
         addressField.setText("");
         phoneField.setText("");
         emailField.setText("");
         cpfField.setText("");
         birthDateField.setText("");
-        petNameField.setText("");
-        clearImage();
-    }
-
-    private void clearImage() {
-        imageLabel.setIcon(null);
-        currentPetImagePath = "";
+        vetNameField.setText("");
     }
 
     class LabelRenderer extends JLabel implements TableCellRenderer {
@@ -361,7 +344,7 @@ public class Pets extends JFrame {
         }
 
         private void removePet(int row) {
-            pets.remove(row);
+            veterinarians.remove(row);
             tableModel.removeRow(row);
         }
     }
@@ -369,7 +352,7 @@ public class Pets extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Pets frame = new Pets();
+            Veterinary frame = new Veterinary();
             frame.setVisible(true);
             frame.setLocationRelativeTo(null);
         });
