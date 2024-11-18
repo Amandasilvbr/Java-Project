@@ -21,6 +21,11 @@
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.41.2.2</version> <!-- You can check for the latest version -->
         </dependency>
+        <dependency>
+            <groupId>org.jdatepicker</groupId>
+            <artifactId>jdatepicker</artifactId>
+            <version>1.3.4</version>
+        </dependency>
     </dependencies>
 
 </project>

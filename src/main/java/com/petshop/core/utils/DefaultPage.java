@@ -10,7 +10,6 @@ public class DefaultPage {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
         frame.setResizable(false);
         try {
             Image icon = ImageIO.read(DefaultPage.class.getClassLoader().getResource("icon.png"));
@@ -18,6 +17,6 @@ public class DefaultPage {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
+        frame.setVisible(true);
     }
 }

@@ -56,7 +56,7 @@ public class Home {
                 {"Calendário", "Verifique o calendário", "calendario.png"},
                 {"Cirurgia", "Marque uma cirurgia", "cirurgia.png"},
                 {"Consulta", "Marque uma consulta", "consulta.png"},
-                {"Evento", "Marque um evento", "evento.png"},
+                {"Veterinário", "Cadastre um veterináro", "evento.png"},
                 {"Tutor", "Cadastre um tutor", "tutor.png"},
                 {"Pets", "Cadastre um pet", "pets.png"},
         };
@@ -101,10 +101,13 @@ public class Home {
                         case 2:
                             //Add re-direct to Consulta page
                             JOptionPane.showMessageDialog(null, "Evento Consulta");
+                            SwingUtilities.getWindowAncestor(card).dispose();
+                            Consultation.start();
                             break;
                         case 3:
                             //Add re-direct to Evento page
-                            JOptionPane.showMessageDialog(null, "Evento Evento");
+                            SwingUtilities.getWindowAncestor(card).dispose();
+                            Veterinary.start();
                             break;
                         case 4:
                             //Add re-direct to Tutor page
