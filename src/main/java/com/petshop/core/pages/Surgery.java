@@ -5,7 +5,7 @@ import com.petshop.core.utils.*;
 import com.petshop.core.utils.CustomDatePicker;
 import com.petshop.db.InsertDB;
 import com.petshop.db.QueryDB;
-import com.petshop.models.Consulta;
+import com.petshop.models.Cirurgia;
 import com.petshop.models.Pet;
 import com.petshop.models.Vet;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -25,14 +25,14 @@ import java.util.Date;
 import javax.swing.JSpinner;
 import java.text.ParseException;
 
-public class Consultation extends JFrame {
+public class Surgery extends JFrame {
     private static final int PANEL_WIDTH = 800;
     private static final int PANEL_HEIGHT = 700;
     private JTextField descriptionField;
     private JTextField typeField;
     private JButton saveButton;
     private DefaultTableModel tableModel;
-    private ArrayList<String[]> consultations;
+    private ArrayList<String[]> surgerys;
     private JTextField petField;
     private JDatePickerImpl datePicker;
     private int currentMonthOffset = 0;
@@ -40,11 +40,11 @@ public class Consultation extends JFrame {
     private JTextField vetField;
     JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
-    public Consultation() {
-        consultations = new ArrayList<>();
+    public Surgery() {
+        surgerys = new ArrayList<>();
         tableModel = new DefaultTableModel(new Object[]{"Descrição", "Data", "Hora", "Veterinário", "Pet"}, 0);
 
-        setTitle("Cadastro de Consultas");
+        setTitle("Cadastro de Cirurgias");
         setSize(PANEL_WIDTH, PANEL_HEIGHT);
         setLayout(new BorderLayout());
 
@@ -79,7 +79,7 @@ public class Consultation extends JFrame {
 
     private JPanel createFormPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createTitledBorder("Formulário de Cadastro de Consulta"));
+        panel.setBorder(BorderFactory.createTitledBorder("Formulário de Cadastro de Cirurgia"));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(2, 2, 2, 2);
@@ -116,7 +116,7 @@ public class Consultation extends JFrame {
 
         gbc.gridy++;
         gbc.insets = new Insets(15, 5, 5, 5);
-        saveButton = new RoundedButton("Salvar consulta");
+        saveButton = new RoundedButton("Salvar cirurgia");
         saveButton.addActionListener(e -> saveData());
 
         gbc.gridwidth = 2;
@@ -145,7 +145,7 @@ public class Consultation extends JFrame {
         String formattedTime = new SimpleDateFormat("HH:mm").format(selectedTime);
         String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(selectedDate);
         try {
-            InsertDB.insertConsulta(type, description, formattedDate, formattedTime, vet, petId);
+            InsertDB.insertCirurgia(type, description, formattedDate, formattedTime, vet, petId);
             InsertDB.insertEvento(formattedDate, formattedTime, description, vet);
             for (Vet v : QueryDB.getAllVet()){
                 if (v.getCpf().contains(vet)){
@@ -160,7 +160,7 @@ public class Consultation extends JFrame {
             }
 
 
-            consultations.add(new String[]{type, description, formattedDate, formattedTime, vet, petName});
+            surgerys.add(new String[]{type, description, formattedDate, formattedTime, vet, petName});
 
 
 
@@ -171,7 +171,7 @@ public class Consultation extends JFrame {
             descriptionField.setText("");
             vetField.setText("");
 
-            updateConsultationPanel(description, petName, vet, formattedDate, formattedTime);
+            updateSurgeryPanel(description, petName, vet, formattedDate, formattedTime);
             splitPane.setRightComponent(createListPanel());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -180,19 +180,19 @@ public class Consultation extends JFrame {
 
     }
 
-    private void updateConsultationPanel(String description, String petId, String vet, String formattedDate, String formattedTime) {
+    private void updateSurgeryPanel(String description, String petId, String vet, String formattedDate, String formattedTime) {
 
-        JPanel consultationsPanel = new JPanel(new GridBagLayout());
-        consultationsPanel.setBorder(BorderFactory.createTitledBorder("Consultas da Semana"));
+        JPanel surgerysPanel = new JPanel(new GridBagLayout());
+        surgerysPanel.setBorder(BorderFactory.createTitledBorder("Cirurgias da Semana"));
 
 
         JPanel newCard = createCards(description, "Pet: " + petId, "Veterinário: " + vet, "Data: " + formattedDate, "Hora: " + formattedTime, 10, 10, 10, 10);
-        consultationsPanel.add(newCard);
+        surgerysPanel.add(newCard);
 
         System.out.println("Card Adicionado");
 
-        consultationsPanel.revalidate();
-        consultationsPanel.repaint();
+        surgerysPanel.revalidate();
+        surgerysPanel.repaint();
     }
 
     private void addFieldToPanel(JPanel panel, GridBagConstraints gbc, String label, JComponent field) {
@@ -210,19 +210,19 @@ public class Consultation extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
-        JPanel consultationsPanel = new JPanel(new GridLayout(0, 2, 10, 10));
-        consultationsPanel.setBorder(BorderFactory.createTitledBorder("Consultas da Semana"));
+        JPanel surgerysPanel = new JPanel(new GridLayout(0, 2, 10, 10));
+        surgerysPanel.setBorder(BorderFactory.createTitledBorder("Cirurgias da Semana"));
 
-//        consultationsPanel.add(createCards("Consulta Veterinária", "Pet: Bella", "Veterinário: Dr. Silva", "Data: 15/11/2024", "Hora: 10:00", 10, 10, 10, 10));
-//        consultationsPanel.add(createCards("Vacinação", "Pet: Max", "Veterinário: Dr. Lima", "Data: 16/11/2024", "Hora: 11:30", 10, 10, 10, 10));
-//        consultationsPanel.add(createCards("Consulta de Retorno", "Pet: Luna", "Veterinário: Dra. Souza", "Data: 17/11/2024", "Hora: 14:00", 10, 10, 10, 10));
-//        consultationsPanel.add(createCards("Banho e Tosa", "Pet: Bob", "Veterinário: Dr. Costa", "Data: 18/11/2024", "Hora: 16:00", 10, 10, 10, 10));
-//        consultationsPanel.add(createCards("Exame", "Pet: Nino", "Veterinário: Dr. Silva", "Data: 19/11/2024", "Hora: 09:00", 10, 10, 10, 10));
-//        consultationsPanel.add(createCards("Check-up", "Pet: Luna", "Veterinário: Dra. Souza", "Data: 20/11/2024", "Hora: 13:00", 10, 10, 10, 10));
-//        consultationsPanel.add(createCards("Consulta Emergencial", "Pet: Bella", "Veterinário: Dr. Costa", "Data: 21/11/2024", "Hora: 15:00", 10, 10, 10, 10));
-//        consultationsPanel.add(createCards("Banho", "Pet: Max", "Veterinário: Dr. Lima", "Data: 22/11/2024", "Hora: 16:00", 10, 10, 10, 10));
+//        surgerysPanel.add(createCards("Cirurgia Veterinária", "Pet: Bella", "Veterinário: Dr. Silva", "Data: 15/11/2024", "Hora: 10:00", 10, 10, 10, 10));
+//        surgerysPanel.add(createCards("Vacinação", "Pet: Max", "Veterinário: Dr. Lima", "Data: 16/11/2024", "Hora: 11:30", 10, 10, 10, 10));
+//        surgerysPanel.add(createCards("Cirurgia de Retorno", "Pet: Luna", "Veterinário: Dra. Souza", "Data: 17/11/2024", "Hora: 14:00", 10, 10, 10, 10));
+//        surgerysPanel.add(createCards("Banho e Tosa", "Pet: Bob", "Veterinário: Dr. Costa", "Data: 18/11/2024", "Hora: 16:00", 10, 10, 10, 10));
+//        surgerysPanel.add(createCards("Exame", "Pet: Nino", "Veterinário: Dr. Silva", "Data: 19/11/2024", "Hora: 09:00", 10, 10, 10, 10));
+//        surgerysPanel.add(createCards("Check-up", "Pet: Luna", "Veterinário: Dra. Souza", "Data: 20/11/2024", "Hora: 13:00", 10, 10, 10, 10));
+//        surgerysPanel.add(createCards("Cirurgia Emergencial", "Pet: Bella", "Veterinário: Dr. Costa", "Data: 21/11/2024", "Hora: 15:00", 10, 10, 10, 10));
+//        surgerysPanel.add(createCards("Banho", "Pet: Max", "Veterinário: Dr. Lima", "Data: 22/11/2024", "Hora: 16:00", 10, 10, 10, 10));
 
-        for (Consulta c : QueryDB.getAllConsulta()){
+        for (Cirurgia c : QueryDB.getAllCirurgia()){
             LocalDate parseDate = LocalDate.parse(c.getDate());
             LocalDate presentDate = LocalDate.now();
 
@@ -230,9 +230,9 @@ public class Consultation extends JFrame {
 
             if (
                     parseDate.get(weekFields.weekOfWeekBasedYear()) == presentDate.get(weekFields.weekOfWeekBasedYear())
-                    && parseDate.get(weekFields.weekBasedYear()) == presentDate.get(weekFields.weekBasedYear())
+                            && parseDate.get(weekFields.weekBasedYear()) == presentDate.get(weekFields.weekBasedYear())
             ) {
-                consultationsPanel.add(
+                surgerysPanel.add(
                         createCards(
                                 c.getTipo(),
                                 "Pet: " + c.getPet().getName(),
@@ -245,7 +245,7 @@ public class Consultation extends JFrame {
             }
         }
 
-        JScrollPane scrollPane = new JScrollPane(consultationsPanel);
+        JScrollPane scrollPane = new JScrollPane(surgerysPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -358,10 +358,10 @@ public class Consultation extends JFrame {
         for (int day = 1; day <= totalDays; day++) {
             JLabel dayLabel = new JLabel(String.valueOf(day), SwingConstants.CENTER);
             dayLabel.setFont(new Font("Arial", Font.PLAIN, 10));
-            if (temConsultaNoDia(day, calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR))) {
+            if (temCirurgiaNoDia(day, calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR))) {
                 dayLabel.setBackground(Color.LIGHT_GRAY);
                 dayLabel.setOpaque(true);
-                dayLabel.setToolTipText("Consulta marcada");
+                dayLabel.setToolTipText("Cirurgia marcada");
             }
             daysPanel.add(dayLabel);
         }
@@ -374,17 +374,17 @@ public class Consultation extends JFrame {
         daysPanel.repaint();
     }
 
-    private boolean temConsultaNoDia(int day, int month, int year) {
+    private boolean temCirurgiaNoDia(int day, int month, int year) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        for (Consulta c : QueryDB.getAllConsulta()) {
+        for (Cirurgia c : QueryDB.getAllCirurgia()) {
             try {
-                Date consultaDate = sdf.parse(c.getDate());
-                Calendar consultaCalendar = Calendar.getInstance();
-                consultaCalendar.setTime(consultaDate);
+                Date cirurgiaDate = sdf.parse(c.getDate());
+                Calendar cirurgiaCalendar = Calendar.getInstance();
+                cirurgiaCalendar.setTime(cirurgiaDate);
 
-                if (consultaCalendar.get(Calendar.DAY_OF_MONTH) == day &&
-                        consultaCalendar.get(Calendar.MONTH) == month &&
-                        consultaCalendar.get(Calendar.YEAR) == year) {
+                if (cirurgiaCalendar.get(Calendar.DAY_OF_MONTH) == day &&
+                        cirurgiaCalendar.get(Calendar.MONTH) == month &&
+                        cirurgiaCalendar.get(Calendar.YEAR) == year) {
                     return true;
                 }
             } catch (ParseException e) {
@@ -396,8 +396,8 @@ public class Consultation extends JFrame {
 
     public static void start() {
         SwingUtilities.invokeLater(() -> {
-            Consultation consultation = new Consultation();
-            DefaultPage.getDefaultConfig(consultation);
+            Surgery surgery = new Surgery();
+            DefaultPage.getDefaultConfig(surgery);
         });
     }
 }

@@ -96,11 +96,11 @@ public class Home {
                             break;
                         case 1:
                             //Add re-direct to Cirurgia page
-                            JOptionPane.showMessageDialog(null, "Evento Cirurgia");
+                            SwingUtilities.getWindowAncestor(card).dispose();
+                            Surgery.start();
                             break;
                         case 2:
                             //Add re-direct to Consulta page
-                            JOptionPane.showMessageDialog(null, "Evento Consulta");
                             SwingUtilities.getWindowAncestor(card).dispose();
                             Consultation.start();
                             break;
