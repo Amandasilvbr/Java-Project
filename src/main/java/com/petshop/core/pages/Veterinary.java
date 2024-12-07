@@ -32,7 +32,7 @@ public class Veterinary extends JFrame {
         veterinarians = new ArrayList<>();
         tableModel = new DefaultTableModel(new Object[]{"Nome", "CPF", "..."}, 0);
         setTitle("Cadastro de veterinários");
-        setSize(PANEL_WIDTH, PANEL_HEIGHT);
+        setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         setLayout(new BorderLayout());
 
         JPanel headerPanel = new JPanel();
@@ -53,6 +53,8 @@ public class Veterinary extends JFrame {
         add(headerPanel, BorderLayout.NORTH);
         add(splitPane, BorderLayout.CENTER);
         add(footerPanel, BorderLayout.PAGE_END);
+
+        searchVeterinarians();
     }
 
     private JComboBox<String> specialtyComboBox;
@@ -179,46 +181,39 @@ public class Veterinary extends JFrame {
         String specialty = (String) specialtyComboBox.getSelectedItem();
 
         if (vetName.isEmpty() || !Validators.isString(vetName)) {
-            JOptionPane.showMessageDialog(this, "O nome do tutor é obrigatório e deve conter apenas letras.");
+            JOptionPane.showMessageDialog(this, "O nome do veterinário é obrigatório e deve conter apenas letras.");
             return;
         }
-
         if (address.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Endereço é obrigatório.");
             return;
         }
-
         if (phone.isEmpty() || !Validators.isNumero(phone)) {
             JOptionPane.showMessageDialog(this, "Telefone é obrigatório e deve ser um número.");
             return;
         }
-
         if (email.isEmpty() || !Validators.validarEmail(email)) {
             JOptionPane.showMessageDialog(this, "Email inválido.");
             return;
         }
-
         if (cpf.isEmpty() || !Validators.validarCPF(cpf)) {
             JOptionPane.showMessageDialog(this, "CPF inválido.");
             return;
         }
-
         if (birthDate.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Data de nascimento é obrigatória.");
             return;
         }
-
         if (crmv.isEmpty()) {
             JOptionPane.showMessageDialog(this, "CRMV é obrigatório.");
             return;
         }
-
         if (specialty == null || specialty.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Especialidade é obrigatória.");
             return;
         }
 
-        String[] data = new String[]{vetName, cpf};
+        String[] data = new String[]{vetName, cpf, "X"};
 
         try {
             InsertDB.insertVeterinario(
@@ -231,6 +226,7 @@ public class Veterinary extends JFrame {
                     specialty,
                     crmv
             );
+
             tableModel.addRow(data);
             JOptionPane.showMessageDialog(this, "Dados salvos com sucesso!");
 
@@ -238,8 +234,6 @@ public class Veterinary extends JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
-
-
     }
 
     private void searchVeterinarians() {

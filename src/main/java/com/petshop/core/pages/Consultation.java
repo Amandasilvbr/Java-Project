@@ -45,7 +45,7 @@ public class Consultation extends JFrame {
         tableModel = new DefaultTableModel(new Object[]{"Descrição", "Data", "Hora", "Veterinário", "Pet"}, 0);
 
         setTitle("Cadastro de Consultas");
-        setSize(PANEL_WIDTH, PANEL_HEIGHT);
+        setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         setLayout(new BorderLayout());
 
         JPanel headerPanel = new JPanel();
@@ -111,7 +111,7 @@ public class Consultation extends JFrame {
         addFieldToPanel(panel, gbc, "Tipo", typeField);
         addFieldToPanel(panel, gbc, "Descrição", descriptionField);
         addFieldToPanel(panel, gbc, "Data", datePicker);
-        addFieldToPanel(panel, gbc, "ID do veterinário", vetField);
+        addFieldToPanel(panel, gbc, "CPF do veterinário", vetField);
         addFieldToPanel(panel, gbc, "Hora", timeSpinner);
 
         gbc.gridy++;

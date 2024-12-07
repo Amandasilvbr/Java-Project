@@ -32,7 +32,7 @@ public class Tutor extends JFrame {
 
         // Set up the JFrame properties
         setTitle("Cadastro de Tutor de Pet");
-        setSize(PANEL_WIDTH, PANEL_HEIGHT);
+        setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 

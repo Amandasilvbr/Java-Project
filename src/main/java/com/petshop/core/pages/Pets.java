@@ -37,7 +37,7 @@ public class Pets extends JFrame {
         tableModel = new DefaultTableModel(new Object[]{"ID", "Nome", "Tutor", "..."}, 0);
 
         setTitle("Cadastro de pets");
-        setSize(PANEL_WIDTH, PANEL_HEIGHT);
+        setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 

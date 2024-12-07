@@ -45,7 +45,7 @@ public class Surgery extends JFrame {
         tableModel = new DefaultTableModel(new Object[]{"Descrição", "Data", "Hora", "Veterinário", "Pet"}, 0);
 
         setTitle("Cadastro de Cirurgias");
-        setSize(PANEL_WIDTH, PANEL_HEIGHT);
+        setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         setLayout(new BorderLayout());
 
         JPanel headerPanel = new JPanel();
